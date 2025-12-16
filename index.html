@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HP Teacher App - Complete Screens & Flows Documentation with Migration Time Estimates</title>
+    <title>HP Parent App - Complete React Native Migration Timeline</title>
     <style>
         body {
             font-family: 'Calibri', 'Arial', sans-serif;
@@ -160,11 +160,22 @@
         .working-hours strong {
             color: #1565c0;
         }
+        .phase-box {
+            background-color: #f0f4f8;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .phase-box h3 {
+            margin-top: 0;
+            color: #1565c0;
+        }
     </style>
 </head>
 <body>
 
-<h1>HP Teacher App - Complete Screens & Flows Documentation with Migration Time Estimates</h1>
+<h1>HP Parent App - Complete React Native Migration Timeline</h1>
 
 <div class="working-hours">
     <h3 style="margin-top: 0; color: #1565c0;">Migration Timeline Summary</h3>
@@ -179,24 +190,26 @@
         <tbody>
             <tr>
                 <td><strong>All Screens Development</strong></td>
-                <td><strong>38 working days</strong></td>
-                <td><strong>7.5 weeks</strong></td>
+                <td><strong>42 working days</strong></td>
+                <td><strong>8.5 weeks</strong></td>
             </tr>
             <tr>
                 <td><strong>Infrastructure & Setup</strong></td>
-                <td><strong>22 working days</strong></td>
-                <td><strong>4.5 weeks</strong></td>
+                <td><strong>20 working days</strong></td>
+                <td><strong>4 weeks</strong></td>
             </tr>
             <tr style="background-color: #4caf50; color: white; font-weight: bold; font-size: 16px;">
                 <td><strong>GRAND TOTAL</strong></td>
-                <td><strong>60 working days</strong></td>
-                <td><strong>12 weeks</strong></td>
+                <td><strong>62 working days</strong></td>
+                <td><strong>12.5 weeks</strong></td>
             </tr>
         </tbody>
     </table>
     <p style="margin-top: 15px;"><strong>Development Mode:</strong> AI-Assisted (Cursor AI) - Accelerated Development</p>
+    <p><strong>Working Schedule:</strong> 5 days/week, 5 hours/day = 25 hours/week</p>
+    <p><strong>Total Hours:</strong> 310 hours (62 days × 5 hours)</p>
     <p><strong>Calendar Time:</strong> ~3 months</p>
-    <p><em>Note: Time estimates include AI-assisted code generation, review, testing, and refinement. Timeline optimized for maximum AI assistance efficiency.</em></p>
+    <p><em>Note: Time estimates include AI-assisted code generation, review, testing, and refinement. Timeline optimized for maximum AI assistance efficiency with Cursor AI.</em></p>
 </div>
 
 <div class="toc">
@@ -206,12 +219,10 @@
         <li><a href="#auth-flow">Authentication Flow</a></li>
         <li><a href="#navigation">Main Navigation Structure</a></li>
         <li><a href="#screens">All Screens by Module</a></li>
+        <li><a href="#infrastructure">Infrastructure & Setup</a></li>
         <li><a href="#flows">User Flows</a></li>
-        <li><a href="#patterns">Navigation Patterns</a></li>
         <li><a href="#summary">Screen Count Summary</a></li>
-        <li><a href="#entry-points-nav">Key Navigation Entry Points</a></li>
-        <li><a href="#notes">Notes</a></li>
-        <li><a href="#migration">Migration Notes for React Native</a></li>
+        <li><a href="#migration-notes">Migration Notes for React Native</a></li>
     </ol>
 </div>
 
@@ -226,8 +237,9 @@
 
 <h3>Deep Links</h3>
 <ul>
-    <li><strong>PrivacyPolicyActivity</strong> - Deep link from web (<code>/privacy-policy</code>)</li>
-    <li><strong>ExitAppActivity</strong> - Exit handler (no display)</li>
+    <li><strong>ActivityRedirection</strong> - Deep link handler (https://www.helloparent.com)</li>
+    <li><strong>BlogDisplayActivity</strong> - Deep link from web (<code>/BlogPost/Index</code>)</li>
+    <li><strong>ActivityStory</strong> - Deep link for bedtime stories (<code>app://in.helloparent.parent/story</code>)</li>
 </ul>
 
 <hr>
@@ -238,9 +250,13 @@
 <pre>
 SplashActivity
     ↓
+WalkThroughActivity (if first time)
+    ↓
 LoginActivity
     ↓ (Login with OTP)
-SessionActivity (if no active session)
+RegistrationActivity (if new user)
+    ↓
+NoStudentsActivity (if no students)
     ↓
 DashboardActivity
 </pre>
@@ -248,8 +264,13 @@ DashboardActivity
 <h3>Screens in Flow</h3>
 <ol>
     <li><strong>SplashActivity</strong> - Initial screen, checks auth state</li>
+    <li><strong>WalkThroughActivity</strong> - Onboarding walkthrough</li>
     <li><strong>LoginActivity</strong> - Username & OTP login</li>
-    <li><strong>SessionActivity</strong> - Session selection (if multiple sessions)</li>
+    <li><strong>RegistrationActivity</strong> - New user registration</li>
+    <li><strong>NoStudentsActivity</strong> - No students found screen</li>
+    <li><strong>IntroChildActivity</strong> - Child introduction</li>
+    <li><strong>ContactUsFormActivity</strong> - Contact form</li>
+    <li><strong>ChildNotListedActivity</strong> - Child not listed form</li>
     <li><strong>DashboardActivity</strong> - Main dashboard (after login)</li>
 </ol>
 
@@ -257,36 +278,35 @@ DashboardActivity
 
 <h2 id="navigation">Main Navigation Structure</h2>
 
-<h3>Bottom Navigation (5 tabs)</h3>
-<ol>
-    <li><strong>HOME</strong> → DashboardActivity</li>
-    <li><strong>MESSAGE</strong> → InboxMessageActivity</li>
-    <li><strong>SCANNER</strong> → ScannerActivity</li>
-    <li><strong>CHILDCARE</strong> → ChildCareActivity</li>
-    <li><strong>STUDENT</strong> → StudentActivity</li>
-</ol>
+<h3>Bottom Navigation (if applicable)</h3>
+<ul>
+    <li>Dashboard-based navigation with side drawer menu</li>
+</ul>
 
 <h3>Side Drawer Menu</h3>
 <ul>
-    <li>Header (User profile, Switch user)</li>
-    <li>View user messages</li>
-    <li>Messages (Inbox, Sent, Scheduled)</li>
-    <li>Directory (Staff, Students, Groups, Subjects, Classes)</li>
-    <li>Staff Attendance</li>
+    <li>Header (User profile, Switch child)</li>
+    <li>Child Profile</li>
+    <li>Messages (Inbox, Sent, Archived)</li>
+    <li>Calendar</li>
+    <li>Albums</li>
+    <li>Fees</li>
+    <li>Timeline</li>
+    <li>Discussions</li>
+    <li>Parent Articles</li>
+    <li>Teach Your Kids</li>
+    <li>Daycare Reports</li>
+    <li>Daily Reports</li>
     <li>Meal Planner</li>
-    <li>Fee (Pending Fee, Collect Fee)</li>
-    <li>Track Cabs</li>
-    <li>Digital Planner (if enabled)</li>
-    <li>Pending Requests</li>
-    <li>Child Handover</li>
-    <li>Promotions (if enabled)</li>
-    <li>Reviews & Ratings</li>
-    <li>Invite Parents to HP</li>
-    <li>Send Suggestions to HP</li>
-    <li>Online Class</li>
+    <li>Consent/RSVP</li>
     <li>Assessment</li>
-    <li>Help Tutorials</li>
-    <li>About us</li>
+    <li>Bedtime Stories</li>
+    <li>Cab Tracking</li>
+    <li>Apply for Leave</li>
+    <li>Suggestions</li>
+    <li>Help Line</li>
+    <li>Settings</li>
+    <li>About Us</li>
     <li>Logout</li>
 </ul>
 
@@ -296,9 +316,9 @@ DashboardActivity
 
 <div class="module-section">
     <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
+        <strong>Module Total Time:</strong> <span class="time-badge">1.5 working days</span>
     </div>
-    <h3>1. Authentication & Onboarding (4 screens)</h3>
+    <h3>1. Authentication & Onboarding (9 screens)</h3>
     <table>
         <thead>
             <tr>
@@ -312,8 +332,14 @@ DashboardActivity
             <tr>
                 <td>Splash</td>
                 <td>SplashActivity</td>
-                <td>Initial screen, auth check</td>
-                <td><strong>1 hour</strong></td>
+                <td>Initial screen, auth check, app update check</td>
+                <td><strong>2 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Walkthrough</td>
+                <td>WalkThroughActivity</td>
+                <td>Onboarding screens</td>
+                <td><strong>2 hours</strong></td>
             </tr>
             <tr>
                 <td>Login</td>
@@ -322,22 +348,46 @@ DashboardActivity
                 <td><strong>3 hours</strong></td>
             </tr>
             <tr>
-                <td>Session Selection</td>
-                <td>SessionActivity</td>
-                <td>Select active session</td>
-                <td><strong>2 hours</strong></td>
+                <td>Registration</td>
+                <td>RegistrationActivity</td>
+                <td>New user registration</td>
+                <td><strong>3 hours</strong></td>
             </tr>
             <tr>
-                <td>Downtime</td>
-                <td>ActivityDowntime</td>
-                <td>Server downtime screen</td>
-                <td><strong>0.5 hour</strong></td>
+                <td>No Students</td>
+                <td>NoStudentsActivity</td>
+                <td>No students found screen</td>
+                <td><strong>1.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Intro Child</td>
+                <td>IntroChildActivity</td>
+                <td>Child introduction screen</td>
+                <td><strong>1.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Contact Us</td>
+                <td>ContactUsFormActivity</td>
+                <td>Contact form</td>
+                <td><strong>1.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Child Not Listed</td>
+                <td>ChildNotListedActivity</td>
+                <td>Child not listed form</td>
+                <td><strong>1.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Intro Paging</td>
+                <td>IntroPagingActivity</td>
+                <td>Intro paging screen</td>
+                <td><strong>1 hour</strong></td>
             </tr>
             <tr>
                 <td><strong>Auth Infrastructure</strong></td>
                 <td>-</td>
-                <td>Token management, session handling</td>
-                <td><strong>1.5 hours</strong></td>
+                <td>Token management, session handling, OTP flow</td>
+                <td><strong>2 hours</strong></td>
             </tr>
         </tbody>
     </table>
@@ -345,9 +395,9 @@ DashboardActivity
 
 <div class="module-section">
     <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
+        <strong>Module Total Time:</strong> <span class="time-badge">1.5 working days</span>
     </div>
-    <h3>2. Dashboard (1 screen)</h3>
+    <h3>2. Dashboard (1 screen + widgets)</h3>
     <table>
         <thead>
             <tr>
@@ -361,19 +411,19 @@ DashboardActivity
             <tr>
                 <td>Dashboard</td>
                 <td>DashboardActivity</td>
-                <td>Main dashboard with widgets, promotions, messages, albums, calendar</td>
-                <td><strong>1 working day</strong></td>
+                <td>Main dashboard with widgets, promotions, messages, albums, calendar, events, fees, bedtime stories, map integration</td>
+                <td><strong>1.5 working days</strong></td>
             </tr>
         </tbody>
     </table>
-    <p><em>Includes: Dashboard UI, widgets, promotions carousel, message list, album preview, calendar preview, menu navigation setup</em></p>
+    <p><em>Includes: Dashboard UI, widgets (messages, albums, calendar, promotions, fees, bedtime stories), map integration for cab tracking, menu navigation setup, child switching, swipe gestures</em></p>
 </div>
 
 <div class="module-section">
     <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">2 working days</span>
+        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
     </div>
-    <h3>3. Students Module (6 screens)</h3>
+    <h3>3. Child Profile Module (3 screens)</h3>
     <table>
         <thead>
             <tr>
@@ -385,429 +435,32 @@ DashboardActivity
         </thead>
         <tbody>
             <tr>
-                <td>Students List</td>
-                <td>StudentActivity</td>
-                <td>List of all students</td>
+                <td>Child Profile</td>
+                <td>ChildProfileActivity</td>
+                <td>Child profile & details</td>
                 <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Student Details</td>
-                <td>StudentDetailActivity</td>
-                <td>Student profile & details</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Create Student</td>
-                <td>CreateStudentNewActivity</td>
-                <td>Multi-step student creation form</td>
-                <td><strong>6 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Student Fee Structure</td>
-                <td>StudentUpdateFeeStructureActivity</td>
-                <td>View/update student fee structure</td>
-                <td><strong>2 hours</strong></td>
             </tr>
             <tr>
                 <td>Authorized Person</td>
-                <td>StudentAuthorizePersonActivity</td>
-                <td>Manage authorized persons for student</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td><strong>Student Module Integration</strong></td>
-                <td>-</td>
-                <td>API integration, state management</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">2 working days</span>
-    </div>
-    <h3>4. Staff Module (6 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Staff List</td>
-                <td>StaffActivity</td>
-                <td>List of all staff members</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Create Staff</td>
-                <td>CreateStaffActivity</td>
-                <td>Create new staff member</td>
-                <td><strong>4 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Edit Staff</td>
-                <td>StaffEditActivity</td>
-                <td>Edit staff details</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Edit Staff Rights</td>
-                <td>StaffEditRightsActivity</td>
-                <td>Manage staff permissions</td>
-                <td><strong>4 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Edit Staff Rights V1</td>
-                <td>ActivityStaffEditRightV1</td>
-                <td>Alternative staff rights editor</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Staff Present/Absent</td>
-                <td>StaffPresentAbsentActivity</td>
-                <td>Staff attendance marking</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
-    </div>
-    <h3>5. Staff Attendance Module (3 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Staff Attendance List</td>
-                <td>ActivityStaffAttendanceList</td>
-                <td>View staff attendance records</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Pending Staff Attendance</td>
-                <td>StaffAttendanceActivity</td>
-                <td>Pending attendance approvals</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Email Attendance Report</td>
-                <td>ActivityEmailAttendance</td>
-                <td>Email attendance reports</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">2 working days</span>
-    </div>
-    <h3>6. Classes & Sessions (6 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Classes List</td>
-                <td>ClassActivity</td>
-                <td>List of all classes</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Create Class</td>
-                <td>CreateClassActivity</td>
-                <td>Create new class</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Update Class</td>
-                <td>ClassUpdateActivity</td>
-                <td>Update class details</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Class Transfer</td>
-                <td>ClassTransferActivity</td>
-                <td>Transfer students between classes</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Session Management</td>
-                <td>SessionActivity</td>
-                <td>Manage academic sessions</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Time Table</td>
-                <td>TimeTableActivity</td>
-                <td>View class time table</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
-    </div>
-    <h3>7. Subjects Module (3 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Subject Master</td>
-                <td>SubjectMasterActivity</td>
-                <td>Master list of subjects</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Class Subjects</td>
-                <td>SubjectClassActivity</td>
-                <td>Subjects assigned to classes</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Add Class Subject</td>
-                <td>AddClassSubjectActivity</td>
-                <td>Assign subjects to classes</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
-    </div>
-    <h3>8. Groups Module (4 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Groups List</td>
-                <td>GroupActivity</td>
-                <td>List of all groups</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Create Group</td>
-                <td>CreateGroupActivity</td>
-                <td>Create new group</td>
+                <td>AuthorizedPersonActivity</td>
+                <td>Manage authorized persons for child</td>
                 <td><strong>2.5 hours</strong></td>
             </tr>
             <tr>
-                <td>Edit Group</td>
-                <td>EditGroupActivity</td>
-                <td>Edit group details</td>
+                <td>Parent Profile</td>
+                <td>ParentProfileActivity</td>
+                <td>Parent profile with children list</td>
                 <td><strong>2.5 hours</strong></td>
             </tr>
-            <tr>
-                <td>Group Details</td>
-                <td>GroupDetailsActivity</td>
-                <td>Group details & students</td>
-                <td><strong>1 hour</strong></td>
-            </tr>
         </tbody>
     </table>
 </div>
 
 <div class="module-section">
     <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">1.5 working days</span>
+        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
     </div>
-    <h3>9. Attendance Module (4 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Student Attendance</td>
-                <td>AttendanceStudentsActivity</td>
-                <td>Mark student attendance</td>
-                <td><strong>4.5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Class Attendance Report</td>
-                <td>ClassAttendanceReportActivity</td>
-                <td>Attendance reports by class</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>My Attendance</td>
-                <td>MyAttendanceActivity</td>
-                <td>Teacher's own attendance</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Cab Attendance</td>
-                <td>CabAttendanceActivity</td>
-                <td>Cab attendance marking</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">4.5 working days</span>
-    </div>
-    <h3>10. Fees Module (12 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Pending Fees</td>
-                <td>PendingFeeActivity</td>
-                <td>List of pending fees</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Pending Fees (Class-wise)</td>
-                <td>PendingFeeClassWiseActivity</td>
-                <td>Select class for pending fees</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Pending Fees (Student-wise)</td>
-                <td>PendingFeeStudentWiseActivity</td>
-                <td>Student-wise pending fees</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Collect Fee</td>
-                <td>CollectFeeActivity</td>
-                <td>Collect fee from students</td>
-                <td><strong>4.5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Collect Fee V2</td>
-                <td>ActivityCollectFeeV2</td>
-                <td>Updated collect fee screen</td>
-                <td><strong>4.5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Fee Component</td>
-                <td>ActivityFeeComponent</td>
-                <td>Manage fee components</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Edit Fee Component</td>
-                <td>CollectFeeEditComponentActivity</td>
-                <td>Edit fee component</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Calculate Fees</td>
-                <td>CalculateFeesActivity</td>
-                <td>Calculate fees for students</td>
-                <td><strong>4.5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Update Calculate Fee</td>
-                <td>CalculateFeesUpdateActivity</td>
-                <td>Update calculated fees</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Approve Fees</td>
-                <td>ApproveFeesActivity</td>
-                <td>Approve pending fee requests</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Update Approve Fee</td>
-                <td>ApproveFeesUpdateActivity</td>
-                <td>Update approved fees</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Payment Requests</td>
-                <td>PaymentRequestsActivity</td>
-                <td>List payment requests</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Create Payment Request</td>
-                <td>CreatePaymentRequestsActivity</td>
-                <td>Create new payment request</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Fee Transactions</td>
-                <td>FeesTransactionActivity</td>
-                <td>View fee transactions</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Fee Chart</td>
-                <td>FeeChartActivity</td>
-                <td>Fee analytics & charts</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">3 working days</span>
-    </div>
-    <h3>11. Messages Module (9 screens)</h3>
+    <h3>4. Messages Module (6 screens)</h3>
     <table>
         <thead>
             <tr>
@@ -820,19 +473,19 @@ DashboardActivity
         <tbody>
             <tr>
                 <td>Inbox</td>
-                <td>InboxMessageActivity</td>
-                <td>Incoming messages</td>
+                <td>MessageActivity</td>
+                <td>Incoming messages list</td>
                 <td><strong>3 hours</strong></td>
             </tr>
             <tr>
-                <td>Inbox Message Detail</td>
-                <td>InboxMessageDisplayActivity</td>
+                <td>Message Detail</td>
+                <td>MessageDisplayActivity</td>
                 <td>View inbox message</td>
                 <td><strong>2 hours</strong></td>
             </tr>
             <tr>
-                <td>Inbox Archive</td>
-                <td>InboxArchiveActivity</td>
+                <td>Archive</td>
+                <td>ArchiveMessageActivity</td>
                 <td>Archived messages</td>
                 <td><strong>2 hours</strong></td>
             </tr>
@@ -849,40 +502,10 @@ DashboardActivity
                 <td><strong>2 hours</strong></td>
             </tr>
             <tr>
-                <td>Sent Message Delivery</td>
-                <td>SentMessageDeliveryActivity</td>
-                <td>Delivery reports</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Scheduled Messages</td>
-                <td>ScheduleMessageActivity</td>
-                <td>Scheduled messages list</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Scheduled Message Detail</td>
-                <td>ScheduleMessageDisplayActivity</td>
-                <td>View scheduled message</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Create Message</td>
-                <td>CreateMessageActivity</td>
+                <td>Compose Message</td>
+                <td>ComposeMessageActivity</td>
                 <td>Compose new message</td>
-                <td><strong>4.5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Audio Message Record</td>
-                <td>AudioMessageRecord</td>
-                <td>Record audio message</td>
                 <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Admission Status Update</td>
-                <td>ActivityAdmissionStatusUpdate</td>
-                <td>Update admission status</td>
-                <td><strong>1.5 hours</strong></td>
             </tr>
         </tbody>
     </table>
@@ -890,9 +513,9 @@ DashboardActivity
 
 <div class="module-section">
     <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">1.5 working days</span>
+        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
     </div>
-    <h3>12. Calendar & Events (4 screens)</h3>
+    <h3>5. Calendar & Events (3 screens)</h3>
     <table>
         <thead>
             <tr>
@@ -907,25 +530,19 @@ DashboardActivity
                 <td>Calendar</td>
                 <td>CalendarActivity</td>
                 <td>Calendar view with events</td>
-                <td><strong>4.5 hours</strong></td>
+                <td><strong>4 hours</strong></td>
             </tr>
             <tr>
                 <td>Calendar Details</td>
-                <td>CalendarDetailsActivity</td>
-                <td>Event details</td>
-                <td><strong>3 hours</strong></td>
+                <td>CalendarDisplayActivity</td>
+                <td>Event details with Google Calendar integration</td>
+                <td><strong>2.5 hours</strong></td>
             </tr>
             <tr>
-                <td>Create Calendar Event</td>
-                <td>CreateCalendarActivity</td>
-                <td>Create new event</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Upcoming Birthdays</td>
-                <td>BirthDayActivity</td>
-                <td>Birthday calendar</td>
-                <td><strong>3 hours</strong></td>
+                <td><strong>Calendar Integration</strong></td>
+                <td>-</td>
+                <td>Google Calendar sync</td>
+                <td><strong>1.5 hours</strong></td>
             </tr>
         </tbody>
     </table>
@@ -933,9 +550,9 @@ DashboardActivity
 
 <div class="module-section">
     <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">2.5 working days</span>
+        <strong>Module Total Time:</strong> <span class="time-badge">1.5 working days</span>
     </div>
-    <h3>13. Albums & Media (6 screens)</h3>
+    <h3>6. Albums & Media (5 screens)</h3>
     <table>
         <thead>
             <tr>
@@ -950,49 +567,37 @@ DashboardActivity
                 <td>Albums List</td>
                 <td>AlbumActivity</td>
                 <td>List of albums</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Album Images</td>
+                <td>AlbumImagesActivity</td>
+                <td>Album photos gallery</td>
                 <td><strong>3 hours</strong></td>
             </tr>
             <tr>
-                <td>Album Details</td>
-                <td>AlbumDetailActivity</td>
-                <td>Album photos & details</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Create Album</td>
-                <td>CreateAlbumActivity</td>
-                <td>Create new album</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Album Image Zoom</td>
-                <td>AlbumImageZoomActivity</td>
-                <td>Full screen image viewer</td>
+                <td>Album Comments</td>
+                <td>AlbumCommentsActivity</td>
+                <td>Album comments</td>
                 <td><strong>2 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Tag/Untag Album</td>
-                <td>ActivityTagUnTagAlbum</td>
-                <td>Photo tagging</td>
-                <td><strong>3 hours</strong></td>
             </tr>
             <tr>
                 <td>Image Zoom</td>
                 <td>ImageZoomActivity</td>
-                <td>Generic image zoom viewer</td>
-                <td><strong>1.5 hours</strong></td>
+                <td>Full screen image viewer</td>
+                <td><strong>2 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Image Zoom Gallery</td>
+                <td>ImageZoomGalleryActivity</td>
+                <td>Gallery image zoom viewer</td>
+                <td><strong>2 hours</strong></td>
             </tr>
             <tr>
                 <td>Image Annotation</td>
                 <td>ImageAnnotationActivity</td>
-                <td>Annotate images</td>
+                <td>Annotate images with photo editor</td>
                 <td><strong>4.5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Video Player</td>
-                <td>ExoPlayerActivityV2</td>
-                <td>Video playback</td>
-                <td><strong>2.5 hours</strong></td>
             </tr>
         </tbody>
     </table>
@@ -1000,9 +605,9 @@ DashboardActivity
 
 <div class="module-section">
     <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">2 working days</span>
+        <strong>Module Total Time:</strong> <span class="time-badge">1.5 working days</span>
     </div>
-    <h3>14. Cabs Module (5 screens)</h3>
+    <h3>7. Fees Module (4 screens)</h3>
     <table>
         <thead>
             <tr>
@@ -1014,45 +619,234 @@ DashboardActivity
         </thead>
         <tbody>
             <tr>
-                <td>Cabs List</td>
-                <td>CabsActivity</td>
-                <td>List of all cabs</td>
-                <td><strong>2 hours</strong></td>
+                <td>Fees List</td>
+                <td>FeeActivity</td>
+                <td>List of fees with payment options</td>
+                <td><strong>4 hours</strong></td>
             </tr>
             <tr>
-                <td>Create Cab</td>
-                <td>CreateCabActivity</td>
-                <td>Create new cab</td>
-                <td><strong>2 hours</strong></td>
+                <td>Select Payment Mode</td>
+                <td>SelectPaymentModeActivity</td>
+                <td>Payment gateway selection (Razorpay)</td>
+                <td><strong>4.5 hours</strong></td>
             </tr>
             <tr>
-                <td>Track Cabs</td>
-                <td>TrackCabsActivity</td>
-                <td>Real-time cab tracking</td>
-                <td><strong>1 working day</strong></td>
+                <td>Fee Transactions</td>
+                <td>FeeTransactionActivity</td>
+                <td>View fee transactions & receipts</td>
+                <td><strong>3 hours</strong></td>
             </tr>
             <tr>
-                <td>Cab Trip List</td>
-                <td>CabTripListActivity</td>
-                <td>List of cab trips</td>
+                <td>Success Payment</td>
+                <td>SuccessConfirmPaymentActivity</td>
+                <td>Payment success confirmation</td>
+                <td><strong>1.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Payment Integration</strong></td>
+                <td>-</td>
+                <td>Razorpay SDK integration</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">2 working days</span>
+    </div>
+    <h3>8. Timeline Module (5 screens)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Timeline</td>
+                <td>TimeLineActivity</td>
+                <td>Timeline feed with posts</td>
+                <td><strong>4.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Timeline Details</td>
+                <td>TimeLineDetailsActivity</td>
+                <td>Timeline post details</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Timeline Post</td>
+                <td>TimelinePostActivity</td>
+                <td>Create timeline post</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Timeline Comments</td>
+                <td>TimeLineCommentActivity</td>
+                <td>Timeline comments</td>
                 <td><strong>2.5 hours</strong></td>
             </tr>
             <tr>
-                <td>Cab Trip Details</td>
-                <td>CabTripShowActivity</td>
-                <td>Trip details & route</td>
+                <td>Timeline Profile</td>
+                <td>TimeLineProfileActivity</td>
+                <td>Timeline user profile</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Timeline Image Viewer</td>
+                <td>TimeLineImageViewPager</td>
+                <td>Image pager for timeline</td>
                 <td><strong>2.5 hours</strong></td>
             </tr>
         </tbody>
     </table>
-    <p><em>Note: Track Cabs includes real-time location tracking, maps integration, and WebSocket connections</em></p>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">1.5 working days</span>
+    </div>
+    <h3>9. Discussions Module (4 screens)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Discussions</td>
+                <td>DiscussionActivity</td>
+                <td>List of discussions</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Discussion Details</td>
+                <td>DiscussionDetailActivity</td>
+                <td>Discussion details with comments</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Create Discussion</td>
+                <td>CreateDiscussionActivity</td>
+                <td>Create new discussion</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Add Comment</td>
+                <td>AddCommentActivity</td>
+                <td>Add comment to discussion</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">1.5 working days</span>
+    </div>
+    <h3>10. Blogs Module (5 screens)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Parent Articles</td>
+                <td>BlogActivity</td>
+                <td>Parenting articles list</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Blog Display</td>
+                <td>BlogDisplayActivity</td>
+                <td>Blog post view (with deep link)</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Blog Display V2</td>
+                <td>BlogDisplayActivity2</td>
+                <td>Alternative blog display</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Create Blog</td>
+                <td>CreateBlogActivity</td>
+                <td>Create blog post</td>
+                <td><strong>3.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Teach Your Kids</td>
+                <td>BlogTeachActivity</td>
+                <td>Teach your kids articles</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Teach Kids Details</td>
+                <td>BlogTeachKidsDetailsActivity</td>
+                <td>Teach kids article details</td>
+                <td><strong>2 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 <div class="module-section">
     <div class="time-estimate">
         <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
     </div>
-    <h3>15. Meal Planner (3 screens)</h3>
+    <h3>11. Daycare & Daily Reports (3 screens)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Daycare Reports</td>
+                <td>DayCareReportActivity</td>
+                <td>Daycare reports list</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Daily Reports</td>
+                <td>DailyReportsActivity</td>
+                <td>Daily reports list</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Reports Integration</strong></td>
+                <td>-</td>
+                <td>Reports API integration</td>
+                <td><strong>2 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
+    </div>
+    <h3>12. Meal Planner (1 screen)</h3>
     <table>
         <thead>
             <tr>
@@ -1066,118 +860,39 @@ DashboardActivity
             <tr>
                 <td>Meal Planner</td>
                 <td>MealPlannerActivity</td>
-                <td>Meal planner list</td>
+                <td>Meal planner with calendar view</td>
+                <td><strong>5 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
+    </div>
+    <h3>13. Consent/RSVP (2 screens)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Consents</td>
+                <td>ConsentActivity</td>
+                <td>List of consents/RSVPs</td>
                 <td><strong>3 hours</strong></td>
             </tr>
             <tr>
-                <td>Create Meal Planner</td>
-                <td>CreateMealPlannerActivity</td>
-                <td>Create meal plan</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Update Meal Planner</td>
-                <td>UpdateMealPlannerActivity</td>
-                <td>Update meal plan</td>
+                <td>Consent Details</td>
+                <td>ConsentDetailActivity</td>
+                <td>Consent details & response</td>
                 <td><strong>2 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">45 hours</span> (5 working days)
-    </div>
-    <h3>16. Child Care / Daycare (8 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Child Care</td>
-                <td>ChildCareActivity</td>
-                <td>Main child care screen</td>
-                <td><strong>6 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Daycare</td>
-                <td>DaycareActivity</td>
-                <td>Daycare reports</td>
-                <td><strong>6 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Daycare Reports</td>
-                <td>DaycareReportsActivity</td>
-                <td>List of daycare reports</td>
-                <td><strong>5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Daycare Report Detail</td>
-                <td>DaycareReportDetailActivity</td>
-                <td>Daycare report details</td>
-                <td><strong>5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Daycare Activity</td>
-                <td>DaycareActActivity</td>
-                <td>Daycare activities</td>
-                <td><strong>5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Daycare Meal</td>
-                <td>DaycareMealActivity</td>
-                <td>Daycare meals</td>
-                <td><strong>5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Change Activity Icon</td>
-                <td>DaycareChangeImageActivity</td>
-                <td>Set activity icons</td>
-                <td><strong>4 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Created Daily Report</td>
-                <td>CreatedDailyReportActivity</td>
-                <td>Created daily reports</td>
-                <td><strong>5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Read Daily Report</td>
-                <td>ActivityDailyReadReport</td>
-                <td>Read daily report</td>
-                <td><strong>4 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
-    </div>
-    <h3>17. Child Handover (1 screen)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Child Handover</td>
-                <td>ActivityChildHandover</td>
-                <td>Child handover process</td>
-                <td><strong>4.5 hours</strong></td>
             </tr>
         </tbody>
     </table>
@@ -1187,56 +902,7 @@ DashboardActivity
     <div class="time-estimate">
         <strong>Module Total Time:</strong> <span class="time-badge">1.5 working days</span>
     </div>
-    <h3>18. Consent/RSVP (4 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Consents/Invite</td>
-                <td>ConsentActivity</td>
-                <td>List of consents</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Consent Details</td>
-                <td>ConsentDetailsActivity</td>
-                <td>Consent details</td>
-                <td><strong>2.5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Create Consent</td>
-                <td>CreateConsentActivity</td>
-                <td>Create new consent</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Consent Delivery</td>
-                <td>ConsentDeliveryActivity</td>
-                <td>Delivery details</td>
-                <td><strong>2.5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Email Consents</td>
-                <td>ActivityEmailConsents</td>
-                <td>Email consent reports</td>
-                <td><strong>2.5 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
-    </div>
-    <h3>19. Assessment (2 screens)</h3>
+    <h3>14. Assessment Module (4 screens)</h3>
     <table>
         <thead>
             <tr>
@@ -1254,139 +920,32 @@ DashboardActivity
                 <td><strong>3 hours</strong></td>
             </tr>
             <tr>
-                <td>Assessment Image Zoom</td>
-                <td>DialogAssessmentImageZoom</td>
-                <td>Assessment image viewer</td>
-                <td><strong>1.5 hours</strong></td>
+                <td>Submit Assessment</td>
+                <td>SubmitAssessmentActivity</td>
+                <td>Submit assessment answers</td>
+                <td><strong>4 hours</strong></td>
             </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
-    </div>
-    <h3>20. Scanner (1 screen)</h3>
-    <table>
-        <thead>
             <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
+                <td>Submit Assignment</td>
+                <td>SubmitAssignmentActivity</td>
+                <td>Submit assignment with file upload</td>
+                <td><strong>4 hours</strong></td>
             </tr>
-        </thead>
-        <tbody>
             <tr>
-                <td>Scanner</td>
-                <td>ScannerActivity</td>
-                <td>QR code scanner (Staff/Student/Cab)</td>
-                <td><strong>1 working day</strong></td>
-            </tr>
-        </tbody>
-    </table>
-    <p><em>Includes: Camera integration, QR code scanning, barcode formats, tab navigation, permission handling</em></p>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
-    </div>
-    <h3>21. Pending Requests (3 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Pending Requests</td>
-                <td>PendingRequestActivity</td>
-                <td>List of pending requests</td>
+                <td>Assessment View Result</td>
+                <td>AssessmentViewResultActivity</td>
+                <td>View assessment results</td>
                 <td><strong>3 hours</strong></td>
             </tr>
-            <tr>
-                <td>Image Request</td>
-                <td>ImageRequestActivity</td>
-                <td>Image requests</td>
-                <td><strong>3 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Authorized Person Request</td>
-                <td>AuthorizedPersonActivity</td>
-                <td>Authorized person requests</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
         </tbody>
     </table>
 </div>
 
 <div class="module-section">
     <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
+        <strong>Module Total Time:</strong> <span class="time-badge">2.5 working days</span>
     </div>
-    <h3>22. Reviews & Ratings (2 screens)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Reviews & Ratings</td>
-                <td>ReviewRatingActivity</td>
-                <td>Reviews list</td>
-                <td><strong>2.5 hours</strong></td>
-            </tr>
-            <tr>
-                <td>Review Details</td>
-                <td>ReviewDisplayActivity</td>
-                <td>Review details</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
-    </div>
-    <h3>23. Promotions (1 screen)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Screen Name</th>
-                <th>Activity Class</th>
-                <th>Description</th>
-                <th>Migration Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Promotions</td>
-                <td>PromotionActivity</td>
-                <td>Promotions list</td>
-                <td><strong>2 hours</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<div class="module-section">
-    <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
-    </div>
-    <h3>24. Bedtime Stories (2 screens)</h3>
+    <h3>15. Bedtime Stories Module (5 screens)</h3>
     <table>
         <thead>
             <tr>
@@ -1400,13 +959,37 @@ DashboardActivity
             <tr>
                 <td>Bedtime Stories List</td>
                 <td>ActivityBedTimeList</td>
-                <td>Stories list</td>
+                <td>Stories list with categories</td>
+                <td><strong>3.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Bedtime Category</td>
+                <td>ActivityBedTimeCategory</td>
+                <td>Story categories</td>
                 <td><strong>2 hours</strong></td>
             </tr>
             <tr>
                 <td>Image Story</td>
                 <td>ActivityImageStory</td>
-                <td>Story reading screen</td>
+                <td>Story reading screen with slides</td>
+                <td><strong>6 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Story Subscription</td>
+                <td>ActivityStorySubscription</td>
+                <td>Subscription plans & payment</td>
+                <td><strong>4 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Story (Deep Link)</td>
+                <td>ActivityStory</td>
+                <td>Story deep link handler</td>
+                <td><strong>2 hours</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Story Integration</strong></td>
+                <td>-</td>
+                <td>Story API, subscription management</td>
                 <td><strong>2.5 hours</strong></td>
             </tr>
         </tbody>
@@ -1415,9 +998,9 @@ DashboardActivity
 
 <div class="module-section">
     <div class="time-estimate">
-        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
+        <strong>Module Total Time:</strong> <span class="time-badge">2 working days</span>
     </div>
-    <h3>25. Help & Support (1 screen)</h3>
+    <h3>16. Quiz Module (4 screens)</h3>
     <table>
         <thead>
             <tr>
@@ -1429,9 +1012,176 @@ DashboardActivity
         </thead>
         <tbody>
             <tr>
-                <td>Help Tutorials</td>
-                <td>HelpActivity</td>
-                <td>Help & tutorials</td>
+                <td>Today Words</td>
+                <td>ActivityTodayWords</td>
+                <td>Vocabulary words list</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Spin Wheel</td>
+                <td>ActivitySpinWheel</td>
+                <td>Spin wheel game for quiz</td>
+                <td><strong>5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Quiz Question</td>
+                <td>ActivityQuizQuestion</td>
+                <td>Quiz questions with options</td>
+                <td><strong>4.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Quiz Complete</td>
+                <td>ActivityQuizComplete</td>
+                <td>Quiz completion screen</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Quiz Integration</strong></td>
+                <td>-</td>
+                <td>Quiz API, animations</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">1.5 working days</span>
+    </div>
+    <h3>17. Cab Tracking (2 screens)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Track Cabs</td>
+                <td>CabTrackActivity</td>
+                <td>Real-time cab tracking with Google Maps</td>
+                <td><strong>9 hours</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Maps Integration</strong></td>
+                <td>-</td>
+                <td>Google Maps SDK, location tracking</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
+    </div>
+    <h3>18. Online Camera / CCTV (2 screens)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>CCTV List</td>
+                <td>ActivityCCTVList</td>
+                <td>List of CCTV cameras</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>CCTV Camera Player</td>
+                <td>ActivityCCTVCameraPlayer</td>
+                <td>Video player for CCTV streams</td>
+                <td><strong>4.5 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
+    </div>
+    <h3>19. Face Detection (1 screen)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Face Detection Camera</td>
+                <td>FaceDetectionCameraActivity</td>
+                <td>Face detection camera screen</td>
+                <td><strong>4.5 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
+    </div>
+    <h3>20. Leave Management (1 screen)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Apply for Leave</td>
+                <td>ApplyForLeaveActivity</td>
+                <td>Apply for leave form</td>
+                <td><strong>3 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
+    </div>
+    <h3>21. Help & Support (2 screens)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Help Line</td>
+                <td>HelpLineActivity</td>
+                <td>Help line contact</td>
+                <td><strong>2 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Suggestions</td>
+                <td>SuggestionsActivity</td>
+                <td>Send suggestions to school</td>
                 <td><strong>2 hours</strong></td>
             </tr>
         </tbody>
@@ -1442,7 +1192,7 @@ DashboardActivity
     <div class="time-estimate">
         <strong>Module Total Time:</strong> <span class="time-badge">1 working day</span>
     </div>
-    <h3>26. About & Settings (4 screens)</h3>
+    <h3>22. Settings & About (8 screens)</h3>
     <table>
         <thead>
             <tr>
@@ -1454,40 +1204,58 @@ DashboardActivity
         </thead>
         <tbody>
             <tr>
+                <td>Settings</td>
+                <td>SettingsActivity</td>
+                <td>App settings</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+            <tr>
+                <td>App Settings</td>
+                <td>AppSettingActivity</td>
+                <td>App configuration settings</td>
+                <td><strong>2 hours</strong></td>
+            </tr>
+            <tr>
                 <td>About Us</td>
-                <td>AboutActivity</td>
+                <td>AboutUsActivity</td>
                 <td>About the app</td>
                 <td><strong>1 hour</strong></td>
             </tr>
             <tr>
-                <td>About Us Details</td>
-                <td>AboutUsActivity</td>
+                <td>About Us Main</td>
+                <td>AboutUsMainActivity</td>
                 <td>Detailed about page</td>
                 <td><strong>1 hour</strong></td>
             </tr>
             <tr>
-                <td>Privacy Policy</td>
-                <td>PrivacyPolicyActivity</td>
-                <td>Privacy policy (web view)</td>
+                <td>Privacy</td>
+                <td>PrivacyActivity</td>
+                <td>Privacy policy</td>
                 <td><strong>1 hour</strong></td>
             </tr>
             <tr>
-                <td>Feedback</td>
-                <td>FeedbackActivity</td>
-                <td>Send feedback</td>
-                <td><strong>2 hours</strong></td>
+                <td>Help</td>
+                <td>HelpActivity</td>
+                <td>Help & tutorials</td>
+                <td><strong>1.5 hours</strong></td>
             </tr>
             <tr>
-                <td>Invite Parents</td>
-                <td>InviteParentActivity</td>
-                <td>Invite parents to app</td>
-                <td><strong>2 hours</strong></td>
+                <td>Rate Us</td>
+                <td>RateUsActivity</td>
+                <td>App rating</td>
+                <td><strong>1 hour</strong></td>
+            </tr>
+            <tr>
+                <td>Community Guidelines</td>
+                <td>CommunityGuidelinesActivity</td>
+                <td>Community guidelines</td>
+                <td><strong>1 hour</strong></td>
             </tr>
             <tr>
                 <td>Battery Optimization</td>
                 <td>BatteryOptimizationActivity</td>
                 <td>Battery optimization settings</td>
-                <td><strong>1 hour</strong></td>
+                <td><strong>1.5 hours</strong></td>
             </tr>
             <tr>
                 <td>Notification Permission</td>
@@ -1503,7 +1271,7 @@ DashboardActivity
     <div class="time-estimate">
         <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
     </div>
-    <h3>27. Common/Utility Screens (3 screens)</h3>
+    <h3>23. Rating & Reviews (1 screen)</h3>
     <table>
         <thead>
             <tr>
@@ -1515,8 +1283,33 @@ DashboardActivity
         </thead>
         <tbody>
             <tr>
-                <td>Web Feature</td>
-                <td>WebFeatureActivity</td>
+                <td>School Rating</td>
+                <td>SchoolRatingActivity</td>
+                <td>Rate school</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
+    </div>
+    <h3>24. Common/Utility Screens (3 screens)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Web Activity</td>
+                <td>WebActivity</td>
                 <td>Generic web view for features</td>
                 <td><strong>1.5 hours</strong></td>
             </tr>
@@ -1524,7 +1317,451 @@ DashboardActivity
                 <td>Image Cropper</td>
                 <td>CropImageActivity</td>
                 <td>Image cropping (third-party)</td>
-                <td><strong>3 hours</strong></td>
+                <td><strong>2 hours</strong></td>
+            </tr>
+            <tr>
+                <td>Video Player</td>
+                <td>ExoPlayerActivity</td>
+                <td>Video playback with ExoPlayer</td>
+                <td><strong>2 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
+    </div>
+    <h3>25. Events (1 screen)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Event List</td>
+                <td>ActivityEventList</td>
+                <td>Events list</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="module-section">
+    <div class="time-estimate">
+        <strong>Module Total Time:</strong> <span class="time-badge">0.5 working day</span>
+    </div>
+    <h3>26. App Update (1 screen)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Screen Name</th>
+                <th>Activity Class</th>
+                <th>Description</th>
+                <th>Migration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>App Update</td>
+                <td>AppUpdateActivity</td>
+                <td>In-app update screen</td>
+                <td><strong>2.5 hours</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<hr>
+
+<h2 id="infrastructure">Infrastructure & Additional Work</h2>
+
+<div class="phase-box">
+    <h3>Phase 1: Project Setup & Foundation (4 working days)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Estimated Time</th>
+                <th>Working Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>React Native Project Initialization</td>
+                <td><strong>2.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Project Structure Setup</td>
+                <td><strong>2.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Navigation Setup (React Navigation)</td>
+                <td><strong>9 hours</strong></td>
+                <td>1.5 days</td>
+            </tr>
+            <tr>
+                <td>State Management Setup (Redux/Context/Zustand)</td>
+                <td><strong>9 hours</strong></td>
+                <td>1.5 days</td>
+            </tr>
+            <tr>
+                <td>Common Components Library</td>
+                <td><strong>9 hours</strong></td>
+                <td>1.5 days</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="phase-box">
+    <h3>Phase 2: API & Network Layer (3 working days)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Estimated Time</th>
+                <th>Working Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>API Client Setup (Axios/Fetch)</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Retrofit → React Native API Migration</td>
+                <td><strong>13.5 hours</strong></td>
+                <td>1.5 days</td>
+            </tr>
+            <tr>
+                <td>Request/Response Interceptors</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Error Handling & Retry Logic</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="phase-box">
+    <h3>Phase 3: Data Storage Migration (2 working days)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Estimated Time</th>
+                <th>Working Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>SharedPreferences → AsyncStorage/MMKV Migration</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Storage Service Abstraction Layer</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Data Migration Scripts</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Offline Data Caching Strategy</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="phase-box">
+    <h3>Phase 4: Firebase Integration (2 working days)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Estimated Time</th>
+                <th>Working Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Firebase Setup (iOS & Android)</td>
+                <td><strong>2.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>FCM Push Notifications</td>
+                <td><strong>6.5 hours</strong></td>
+                <td>1 day</td>
+            </tr>
+            <tr>
+                <td>Firebase Analytics</td>
+                <td><strong>2.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Firebase Crashlytics</td>
+                <td><strong>2.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Firebase Performance Monitoring</td>
+                <td><strong>2 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="phase-box">
+    <h3>Phase 5: Third-Party Integrations (3 working days)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Estimated Time</th>
+                <th>Working Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Google Maps Integration</td>
+                <td><strong>6.5 hours</strong></td>
+                <td>1 day</td>
+            </tr>
+            <tr>
+                <td>Razorpay Payment Gateway</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Image Picker & Camera</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Image Cropper Integration</td>
+                <td><strong>2.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Video Player (ExoPlayer → React Native Video)</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Photo Editor Integration</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Google Calendar Integration</td>
+                <td><strong>2.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="phase-box">
+    <h3>Phase 6: Platform-Specific Code (2 working days)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Estimated Time</th>
+                <th>Working Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>iOS Native Modules Setup</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Android Native Modules Setup</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Platform-Specific UI Adjustments</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Deep Linking Setup (iOS & Android)</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Permissions Handling (iOS & Android)</td>
+                <td><strong>2 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="phase-box">
+    <h3>Phase 7: Testing & QA (2 working days)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Estimated Time</th>
+                <th>Working Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Unit Testing Setup</td>
+                <td><strong>2.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Integration Testing</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Manual Testing & Bug Fixes</td>
+                <td><strong>9 hours</strong></td>
+                <td>1 day</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="phase-box">
+    <h3>Phase 8: Performance & Optimization (1.5 working days)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Estimated Time</th>
+                <th>Working Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Performance Optimization</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Image Optimization & Caching</td>
+                <td><strong>2.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Bundle Size Optimization</td>
+                <td><strong>2.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="phase-box">
+    <h3>Phase 9: Build & Deployment (1.5 working days)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Estimated Time</th>
+                <th>Working Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>iOS Build Configuration</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>Android Build Configuration</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+            <tr>
+                <td>CI/CD Pipeline Setup</td>
+                <td><strong>4.5 hours</strong></td>
+                <td>0.5 day</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="note-box" style="margin-top: 30px;">
+    <h3 style="margin-top: 0;">Infrastructure Summary</h3>
+    <table style="margin-top: 15px;">
+        <thead>
+            <tr>
+                <th>Phase</th>
+                <th>Working Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Phase 1: Project Setup & Foundation</td>
+                <td><strong>4 working days</strong></td>
+            </tr>
+            <tr>
+                <td>Phase 2: API & Network Layer</td>
+                <td><strong>3 working days</strong></td>
+            </tr>
+            <tr>
+                <td>Phase 3: Data Storage Migration</td>
+                <td><strong>2 working days</strong></td>
+            </tr>
+            <tr>
+                <td>Phase 4: Firebase Integration</td>
+                <td><strong>2 working days</strong></td>
+            </tr>
+            <tr>
+                <td>Phase 5: Third-Party Integrations</td>
+                <td><strong>3 working days</strong></td>
+            </tr>
+            <tr>
+                <td>Phase 6: Platform-Specific Code</td>
+                <td><strong>2 working days</strong></td>
+            </tr>
+            <tr>
+                <td>Phase 7: Testing & QA</td>
+                <td><strong>2 working days</strong></td>
+            </tr>
+            <tr>
+                <td>Phase 8: Performance & Optimization</td>
+                <td><strong>1.5 working days</strong></td>
+            </tr>
+            <tr>
+                <td>Phase 9: Build & Deployment</td>
+                <td><strong>1.5 working days</strong></td>
+            </tr>
+            <tr style="background-color: #e3f2fd; font-weight: bold;">
+                <td><strong>Infrastructure Total</strong></td>
+                <td><strong>20 working days</strong></td>
             </tr>
         </tbody>
     </table>
@@ -1539,352 +1776,122 @@ DashboardActivity
     <pre>
 SplashActivity
     ↓
+WalkThroughActivity (if first time)
+    ↓
 LoginActivity (Enter username)
     ↓
 OTP Verification
     ↓
-SessionActivity (if multiple sessions)
+RegistrationActivity (if new user)
+    ↓
+NoStudentsActivity (if no students)
     ↓
 DashboardActivity
     </pre>
 </div>
 
 <div class="flow-box">
-    <h3>Flow 2: Student Management</h3>
+    <h3>Flow 2: Messages Flow</h3>
     <pre>
 DashboardActivity
-    ↓ (Menu: Directory → Students)
-StudentActivity
-    ↓ (Click student)
-StudentDetailActivity
-    ├─→ CreateStudentNewActivity (Add new)
-    ├─→ StudentUpdateFeeStructureActivity (Fee structure)
-    └─→ StudentAuthorizePersonActivity (Authorized persons)
+    ↓ (Menu: Messages)
+MessageActivity
+    ├─→ MessageDisplayActivity (View message)
+    ├─→ ArchiveMessageActivity (Archived)
+    ├─→ SentMessageActivity (Sent messages)
+    │   └─→ SentMessageDisplayActivity
+    └─→ ComposeMessageActivity (Compose)
     </pre>
 </div>
 
 <div class="flow-box">
-    <h3>Flow 3: Staff Management</h3>
-    <pre>
-DashboardActivity
-    ↓ (Menu: Directory → Staff)
-StaffActivity
-    ├─→ CreateStaffActivity (Add new)
-    ├─→ StaffEditActivity (Edit)
-    ├─→ StaffEditRightsActivity (Edit rights)
-    └─→ ActivityStaffAttendanceList (View attendance)
-    </pre>
-</div>
-
-<div class="flow-box">
-    <h3>Flow 4: Class Management</h3>
-    <pre>
-DashboardActivity
-    ↓ (Menu: Directory → Classes)
-ClassActivity
-    ├─→ CreateClassActivity (Add new)
-    ├─→ ClassUpdateActivity (Edit)
-    ├─→ ClassTransferActivity (Transfer students)
-    └─→ SubjectClassActivity (Manage subjects)
-    </pre>
-</div>
-
-<div class="flow-box">
-    <h3>Flow 5: Attendance Flow</h3>
-    <pre>
-DashboardActivity
-    ↓ (Menu: Staff Attendance OR Bottom Nav: Scanner)
-ScannerActivity
-    ├─→ Staff Scan → StaffPresentAbsentActivity
-    ├─→ Student Scan → AttendanceStudentsActivity
-    └─→ Cab Scan → CabAttendanceActivity
-
-OR
-
-DashboardActivity
-    ↓ (Menu: Directory → Classes → Attendance)
-AttendanceStudentsActivity
-    ↓
-ClassAttendanceReportActivity
-    </pre>
-</div>
-
-<div class="flow-box">
-    <h3>Flow 6: Fees Management</h3>
-    <pre>
-DashboardActivity
-    ↓ (Menu: Fee)
-    ├─→ PendingFeeActivity
-    │   ├─→ PendingFeeClassWiseActivity
-    │   └─→ PendingFeeStudentWiseActivity
-    │
-    └─→ CollectFeeActivity
-        ├─→ ActivityCollectFeeV2
-        ├─→ ActivityFeeComponent
-        └─→ CollectFeeEditComponentActivity
-
-OR
-
-DashboardActivity
-    ↓ (Menu: Fee → Calculate Fees)
-CalculateFeesActivity
-    └─→ CalculateFeesUpdateActivity
-
-OR
-
-DashboardActivity
-    ↓ (Menu: Fee → Approve Fees)
-ApproveFeesActivity
-    └─→ ApproveFeesUpdateActivity
-    </pre>
-</div>
-
-<div class="flow-box">
-    <h3>Flow 7: Messages Flow</h3>
-    <pre>
-DashboardActivity
-    ↓ (Bottom Nav: MESSAGE OR Menu: Messages)
-InboxMessageActivity
-    ├─→ InboxMessageDisplayActivity (View message)
-    ├─→ InboxArchiveActivity (Archived)
-    └─→ CreateMessageActivity (Compose)
-        ├─→ AudioMessageRecord (Record audio)
-        └─→ ImagePicker (Attach images)
-
-OR
-
-SentMessageActivity
-    ├─→ SentMessageDisplayActivity
-    └─→ SentMessageDeliveryActivity (Delivery reports)
-
-OR
-
-ScheduleMessageActivity
-    └─→ ScheduleMessageDisplayActivity
-    </pre>
-</div>
-
-<div class="flow-box">
-    <h3>Flow 8: Calendar & Events</h3>
+    <h3>Flow 3: Calendar & Events</h3>
     <pre>
 DashboardActivity
     ↓ (Menu: Calendar OR Dashboard widget)
 CalendarActivity
-    ├─→ CalendarDetailsActivity (Event details)
-    ├─→ CreateCalendarActivity (Create event)
-    └─→ BirthDayActivity (Birthdays)
+    └─→ CalendarDisplayActivity (Event details)
+        └─→ AddInGoogleCalendar (Add to Google Calendar)
     </pre>
 </div>
 
 <div class="flow-box">
-    <h3>Flow 9: Albums Flow</h3>
+    <h3>Flow 4: Albums Flow</h3>
     <pre>
 DashboardActivity
     ↓ (Menu: Albums OR Dashboard widget)
 AlbumActivity
-    ├─→ AlbumDetailActivity
-    │   ├─→ AlbumImageZoomActivity (View image)
-    │   ├─→ ImageAnnotationActivity (Annotate)
-    │   └─→ ActivityTagUnTagAlbum (Tag photos)
-    │
-    └─→ CreateAlbumActivity
+    └─→ AlbumImagesActivity
+        ├─→ ImageZoomActivity (View image)
+        ├─→ ImageZoomGalleryActivity (Gallery view)
+        ├─→ ImageAnnotationActivity (Annotate)
+        └─→ AlbumCommentsActivity (Comments)
     </pre>
 </div>
 
 <div class="flow-box">
-    <h3>Flow 10: Cabs Flow</h3>
+    <h3>Flow 5: Fees Flow</h3>
     <pre>
 DashboardActivity
-    ↓ (Menu: Track Cabs)
-CabTripListActivity
-    ├─→ TrackCabsActivity (Real-time tracking)
-    └─→ CabTripShowActivity (Trip details)
-
-OR
-
-DashboardActivity
-    ↓ (Menu: Directory → Cabs)
-CabsActivity
-    ├─→ CreateCabActivity
-    └─→ CabAttendanceActivity (from Scanner)
+    ↓ (Menu: Fees OR Dashboard widget)
+FeeActivity
+    ├─→ SelectPaymentModeActivity
+    │   └─→ SuccessConfirmPaymentActivity
+    └─→ FeeTransactionActivity (View receipts)
     </pre>
 </div>
 
 <div class="flow-box">
-    <h3>Flow 11: Child Care Flow</h3>
+    <h3>Flow 6: Timeline Flow</h3>
     <pre>
 DashboardActivity
-    ↓ (Bottom Nav: CHILDCARE)
-ChildCareActivity
-    ├─→ DaycareActivity
-    │   ├─→ DaycareReportsActivity
-    │   ├─→ DaycareReportDetailActivity
-    │   ├─→ DaycareActActivity
-    │   ├─→ DaycareMealActivity
-    │   └─→ DaycareChangeImageActivity
-    │
-    └─→ CreatedDailyReportActivity
-        └─→ ActivityDailyReadReport
+    ↓ (Menu: Timeline)
+TimeLineActivity
+    ├─→ TimeLineDetailsActivity (Post details)
+    ├─→ TimelinePostActivity (Create post)
+    ├─→ TimeLineCommentActivity (Comments)
+    ├─→ TimeLineProfileActivity (User profile)
+    └─→ TimeLineImageViewPager (Image viewer)
     </pre>
 </div>
 
 <div class="flow-box">
-    <h3>Flow 12: Meal Planner Flow</h3>
+    <h3>Flow 7: Bedtime Stories Flow</h3>
     <pre>
 DashboardActivity
-    ↓ (Menu: Meal Planner)
-MealPlannerActivity
-    ├─→ CreateMealPlannerActivity
-    └─→ UpdateMealPlannerActivity
+    ↓ (Menu: Bedtime Stories OR Dashboard widget)
+ActivityBedTimeList
+    ├─→ ActivityBedTimeCategory (Categories)
+    ├─→ ActivityImageStory (Read story)
+    │   └─→ ActivityQuizQuestion (Quiz)
+    │       └─→ ActivityQuizComplete
+    ├─→ ActivitySpinWheel (Spin wheel)
+    ├─→ ActivityTodayWords (Vocabulary)
+    └─→ ActivityStorySubscription (Subscription)
     </pre>
 </div>
 
 <div class="flow-box">
-    <h3>Flow 13: Consent Flow</h3>
+    <h3>Flow 8: Cab Tracking Flow</h3>
     <pre>
 DashboardActivity
-    ↓ (Menu: Consents/Invite)
-ConsentActivity
-    ├─→ ConsentDetailsActivity
-    ├─→ CreateConsentActivity
-    ├─→ ConsentDeliveryActivity
-    └─→ ActivityEmailConsents
+    ↓ (Menu: Track Cabs OR Dashboard map)
+CabTrackActivity
+    └─→ Real-time tracking with Google Maps
     </pre>
 </div>
 
 <div class="flow-box">
-    <h3>Flow 14: Assessment Flow</h3>
+    <h3>Flow 9: Assessment Flow</h3>
     <pre>
 DashboardActivity
     ↓ (Menu: Assessment)
 AssessmentActivity
-    └─→ DialogAssessmentImageZoom
+    ├─→ SubmitAssessmentActivity
+    ├─→ SubmitAssignmentActivity
+    └─→ AssessmentViewResultActivity
     </pre>
 </div>
-
-<div class="flow-box">
-    <h3>Flow 15: Pending Requests Flow</h3>
-    <pre>
-DashboardActivity
-    ↓ (Menu: Pending Requests)
-PendingRequestActivity
-    ├─→ ImageRequestActivity
-    └─→ AuthorizedPersonActivity
-    </pre>
-</div>
-
-<div class="flow-box">
-    <h3>Flow 16: Reviews Flow</h3>
-    <pre>
-DashboardActivity
-    ↓ (Menu: Reviews & Ratings)
-ReviewRatingActivity
-    └─→ ReviewDisplayActivity
-    </pre>
-</div>
-
-<div class="flow-box">
-    <h3>Flow 17: Scanner Flow</h3>
-    <pre>
-DashboardActivity
-    ↓ (Bottom Nav: SCANNER)
-ScannerActivity
-    ├─→ Staff Scan Tab
-    │   └─→ StaffPresentAbsentActivity
-    │
-    ├─→ Student Scan Tab
-    │   └─→ AttendanceStudentsActivity
-    │
-    └─→ Cab Scan Tab
-        └─→ CabAttendanceActivity
-    </pre>
-</div>
-
-<hr>
-
-<h2 id="patterns">Navigation Patterns</h2>
-
-<h3>Pattern 1: Bottom Navigation</h3>
-<ul>
-    <li><strong>Persistent across</strong>: Dashboard, Messages, Scanner, Child Care, Students</li>
-    <li><strong>5 tabs</strong>: HOME, MESSAGE, SCANNER, CHILDCARE, STUDENT</li>
-    <li><strong>Behavior</strong>: Always visible, switches between main modules</li>
-</ul>
-
-<h3>Pattern 2: Side Drawer Navigation</h3>
-<ul>
-    <li><strong>Available in</strong>: All BaseNavigationActivity screens</li>
-    <li><strong>Structure</strong>: Expandable list with groups and children</li>
-    <li><strong>Access</strong>: Hamburger menu icon in toolbar</li>
-</ul>
-
-<h3>Pattern 3: Tab Navigation</h3>
-<ul>
-    <li><strong>Used in</strong>:
-        <ul>
-            <li>ScannerActivity (Staff/Student/Cab tabs)</li>
-            <li>Messages (Inbox/Sent/Scheduled tabs)</li>
-            <li>Create Student (Multi-step tabs)</li>
-        </ul>
-    </li>
-</ul>
-
-<h3>Pattern 4: List → Detail Navigation</h3>
-<ul>
-    <li><strong>Pattern</strong>: List screen → Click item → Detail screen</li>
-    <li><strong>Examples</strong>:
-        <ul>
-            <li>StudentActivity → StudentDetailActivity</li>
-            <li>AlbumActivity → AlbumDetailActivity</li>
-            <li>InboxMessageActivity → InboxMessageDisplayActivity</li>
-        </ul>
-    </li>
-</ul>
-
-<h3>Pattern 5: Create/Edit Flow</h3>
-<ul>
-    <li><strong>Pattern</strong>: List → Create/Edit → Save → Back to List</li>
-    <li><strong>Examples</strong>:
-        <ul>
-            <li>StaffActivity → CreateStaffActivity → StaffActivity</li>
-            <li>ClassActivity → CreateClassActivity → ClassActivity</li>
-        </ul>
-    </li>
-</ul>
-
-<h3>Pattern 6: Multi-Step Forms</h3>
-<ul>
-    <li><strong>Pattern</strong>: Wizard-style navigation with progress indicator</li>
-    <li><strong>Examples</strong>:
-        <ul>
-            <li>CreateStudentNewActivity (5 steps)</li>
-            <li>CreateMessageActivity (Compose → Recipients → Send)</li>
-        </ul>
-    </li>
-</ul>
-
-<h3>Pattern 7: Modal/Overlay Screens</h3>
-<ul>
-    <li><strong>Pattern</strong>: Full-screen overlays for specific actions</li>
-    <li><strong>Examples</strong>:
-        <ul>
-            <li>ImageZoomActivity</li>
-            <li>ImageAnnotationActivity</li>
-            <li>AudioMessageRecord</li>
-        </ul>
-    </li>
-</ul>
-
-<h3>Pattern 8: Deep Linking</h3>
-<ul>
-    <li><strong>Pattern</strong>: Direct navigation from external sources</li>
-    <li><strong>Examples</strong>:
-        <ul>
-            <li>PrivacyPolicyActivity (from web)</li>
-            <li>Notification deep links</li>
-        </ul>
-    </li>
-</ul>
 
 <hr>
 
@@ -1894,108 +1901,61 @@ ScannerActivity
         <tr>
             <th>Module</th>
             <th>Screen Count</th>
+            <th>Migration Time</th>
             <th>Working Days</th>
         </tr>
     </thead>
     <tbody>
-        <tr><td>Authentication & Onboarding</td><td>4</td><td>1 working day</td></tr>
-        <tr><td>Dashboard</td><td>1</td><td>1 working day</td></tr>
-        <tr><td>Students</td><td>6</td><td>2 working days</td></tr>
-        <tr><td>Staff</td><td>6</td><td>2 working days</td></tr>
-        <tr><td>Staff Attendance</td><td>3</td><td>1 working day</td></tr>
-        <tr><td>Classes & Sessions</td><td>6</td><td>2 working days</td></tr>
-        <tr><td>Subjects</td><td>3</td><td>1 working day</td></tr>
-        <tr><td>Groups</td><td>4</td><td>1 working day</td></tr>
-        <tr><td>Attendance</td><td>4</td><td>1.5 working days</td></tr>
-        <tr><td>Fees</td><td>12</td><td>4.5 working days</td></tr>
-        <tr><td>Messages</td><td>9</td><td>3 working days</td></tr>
-        <tr><td>Calendar & Events</td><td>4</td><td>1.5 working days</td></tr>
-        <tr><td>Albums & Media</td><td>6</td><td>2.5 working days</td></tr>
-        <tr><td>Cabs</td><td>5</td><td>2 working days</td></tr>
-        <tr><td>Meal Planner</td><td>3</td><td>1 working day</td></tr>
-        <tr><td>Child Care / Daycare</td><td>8</td><td>2.5 working days</td></tr>
-        <tr><td>Child Handover</td><td>1</td><td>0.5 working day</td></tr>
-        <tr><td>Consent/RSVP</td><td>4</td><td>1.5 working days</td></tr>
-        <tr><td>Assessment</td><td>2</td><td>0.5 working day</td></tr>
-        <tr><td>Scanner</td><td>1</td><td>1 working day</td></tr>
-        <tr><td>Pending Requests</td><td>3</td><td>1 working day</td></tr>
-        <tr><td>Reviews & Ratings</td><td>2</td><td>0.5 working day</td></tr>
-        <tr><td>Promotions</td><td>1</td><td>0.5 working day</td></tr>
-        <tr><td>Bedtime Stories</td><td>2</td><td>0.5 working day</td></tr>
-        <tr><td>Help & Support</td><td>1</td><td>0.5 working day</td></tr>
-        <tr><td>About & Settings</td><td>4</td><td>1 working day</td></tr>
-        <tr><td>Common/Utility</td><td>3</td><td>0.5 working day</td></tr>
-        <tr style="background-color: #3498db; color: white; font-weight: bold;"><td><strong>TOTAL</strong></td><td><strong>~110 screens</strong></td><td><strong>~38 working days</strong></td></tr>
+        <tr><td>Authentication & Onboarding</td><td>9</td><td><strong>17.5 hours</strong></td><td>1.5 working days</td></tr>
+        <tr><td>Dashboard</td><td>1</td><td><strong>1.5 working days</strong></td><td>1.5 working days</td></tr>
+        <tr><td>Child Profile</td><td>3</td><td><strong>8 hours</strong></td><td>1 working day</td></tr>
+        <tr><td>Messages</td><td>6</td><td><strong>14 hours</strong></td><td>1 working day</td></tr>
+        <tr><td>Calendar & Events</td><td>3</td><td><strong>8 hours</strong></td><td>1 working day</td></tr>
+        <tr><td>Albums & Media</td><td>6</td><td><strong>16 hours</strong></td><td>1.5 working days</td></tr>
+        <tr><td>Fees</td><td>4</td><td><strong>16 hours</strong></td><td>1.5 working days</td></tr>
+        <tr><td>Timeline</td><td>6</td><td><strong>18 hours</strong></td><td>2 working days</td></tr>
+        <tr><td>Discussions</td><td>4</td><td><strong>11.5 hours</strong></td><td>1.5 working days</td></tr>
+        <tr><td>Blogs</td><td>6</td><td><strong>16.5 hours</strong></td><td>1.5 working days</td></tr>
+        <tr><td>Daycare & Daily Reports</td><td>3</td><td><strong>8 hours</strong></td><td>1 working day</td></tr>
+        <tr><td>Meal Planner</td><td>1</td><td><strong>5 hours</strong></td><td>1 working day</td></tr>
+        <tr><td>Consent/RSVP</td><td>2</td><td><strong>5 hours</strong></td><td>1 working day</td></tr>
+        <tr><td>Assessment</td><td>4</td><td><strong>14 hours</strong></td><td>1.5 working days</td></tr>
+        <tr><td>Bedtime Stories</td><td>5</td><td><strong>20 hours</strong></td><td>2.5 working days</td></tr>
+        <tr><td>Quiz</td><td>4</td><td><strong>18 hours</strong></td><td>2 working days</td></tr>
+        <tr><td>Cab Tracking</td><td>1</td><td><strong>12 hours</strong></td><td>1.5 working days</td></tr>
+        <tr><td>Online Camera / CCTV</td><td>2</td><td><strong>7 hours</strong></td><td>1 working day</td></tr>
+        <tr><td>Face Detection</td><td>1</td><td><strong>4.5 hours</strong></td><td>0.5 working day</td></tr>
+        <tr><td>Leave Management</td><td>1</td><td><strong>3 hours</strong></td><td>0.5 working day</td></tr>
+        <tr><td>Help & Support</td><td>2</td><td><strong>4 hours</strong></td><td>0.5 working day</td></tr>
+        <tr><td>Settings & About</td><td>10</td><td><strong>13.5 hours</strong></td><td>1 working day</td></tr>
+        <tr><td>Rating & Reviews</td><td>1</td><td><strong>2.5 hours</strong></td><td>0.5 working day</td></tr>
+        <tr><td>Common/Utility</td><td>3</td><td><strong>5.5 hours</strong></td><td>0.5 working day</td></tr>
+        <tr><td>Events</td><td>1</td><td><strong>2.5 hours</strong></td><td>0.5 working day</td></tr>
+        <tr><td>App Update</td><td>1</td><td><strong>2.5 hours</strong></td><td>0.5 working day</td></tr>
+        <tr style="background-color: #3498db; color: white; font-weight: bold;"><td><strong>TOTAL</strong></td><td><strong>~85 screens</strong></td><td><strong>~210 hours</strong></td><td><strong>~42 working days</strong></td></tr>
     </tbody>
 </table>
 
 <div class="note-box" style="margin-top: 30px;">
     <h3 style="margin-top: 0;">Screens Development Summary</h3>
-    <p><strong>Total Working Days:</strong> ~38 working days</p>
-    <p><strong>Total Weeks:</strong> ~7.5 weeks</p>
-    <p><em>Note: This includes AI-assisted code generation, review, testing, and refinement. Additional time required for infrastructure setup, API integration, testing, and deployment phases (see Infrastructure section below).</em></p>
+    <p><strong>Total Development Time:</strong> ~210 hours (AI-Assisted)</p>
+    <p><strong>Total Working Days:</strong> ~42 working days</p>
+    <p><strong>Total Weeks:</strong> ~8.5 weeks</p>
+    <p><em>Note: This includes AI-assisted code generation, review, testing, and refinement. Additional time required for infrastructure setup, API integration, testing, and deployment phases (see Infrastructure section above).</em></p>
 </div>
 
 <hr>
 
-<h2 id="entry-points-nav">Key Navigation Entry Points</h2>
-
-<h3>From Dashboard</h3>
-<ol>
-    <li><strong>Bottom Navigation</strong> → 5 main modules</li>
-    <li><strong>Side Drawer Menu</strong> → All features</li>
-    <li><strong>Dashboard Widgets</strong> → Quick access to:
-        <ul>
-            <li>Messages</li>
-            <li>Albums</li>
-            <li>Calendar</li>
-            <li>Promotions</li>
-            <li>Fee insights</li>
-        </ul>
-    </li>
-</ol>
-
-<h3>From Notifications</h3>
-<ul>
-    <li>Deep links to specific screens based on notification type</li>
-    <li>Message notifications → InboxMessageDisplayActivity</li>
-    <li>Event notifications → CalendarDetailsActivity</li>
-    <li>Fee notifications → PendingFeeActivity</li>
-</ul>
-
-<h3>From External Sources</h3>
-<ul>
-    <li>Deep links from web</li>
-    <li>Share intents</li>
-    <li>File associations</li>
-</ul>
-
-<hr>
-
-<h2 id="notes">Notes</h2>
-
-<div class="note-box">
-    <ol>
-        <li><strong>Screen Variations</strong>: Some screens have V1/V2 versions (e.g., ActivityCollectFeeV2, ActivityStaffEditRightV1)</li>
-        <li><strong>Conditional Screens</strong>: Some screens appear based on user rights or school modules (e.g., Digital Planner, Promotions)</li>
-        <li><strong>Dialog Activities</strong>: Some "screens" are actually dialogs (e.g., DialogAssessmentImageZoom)</li>
-        <li><strong>Third-party Activities</strong>: CropImageActivity is from a library</li>
-        <li><strong>Utility Screens</strong>: Some screens are utility-only (e.g., ExitAppActivity, ActivityDowntime)</li>
-    </ol>
-</div>
-
-<hr>
-
-<h2 id="migration">Migration Notes for React Native</h2>
+<h2 id="migration-notes">Migration Notes for React Native</h2>
 
 <h3>Navigation Structure</h3>
 <ul>
     <li>Use React Navigation with:
         <ul>
-            <li>Bottom Tab Navigator (5 tabs)</li>
+            <li>Stack Navigator (main navigation)</li>
             <li>Drawer Navigator (side menu)</li>
-            <li>Stack Navigator (list → detail flows)</li>
-            <li>Tab Navigator (within screens like Scanner)</li>
+            <li>Tab Navigator (where applicable)</li>
+            <li>Deep linking configuration</li>
         </ul>
     </li>
 </ul>
@@ -2011,81 +1971,35 @@ ScannerActivity
 <ul>
     <li>User authentication state</li>
     <li>Navigation state</li>
-    <li>Feature flags (rights, modules)</li>
-    <li>Current user context</li>
+    <li>Current child/student context</li>
+    <li>Feature flags</li>
+    <li>Offline data caching</li>
+</ul>
+
+<h3>Key Libraries to Use</h3>
+<ul>
+    <li><strong>Navigation:</strong> @react-navigation/native, @react-navigation/stack, @react-navigation/drawer</li>
+    <li><strong>State:</strong> Redux Toolkit / Zustand / Context API</li>
+    <li><strong>API:</strong> Axios</li>
+    <li><strong>Storage:</strong> @react-native-async-storage/async-storage or react-native-mmkv</li>
+    <li><strong>Maps:</strong> react-native-maps</li>
+    <li><strong>Images:</strong> react-native-fast-image</li>
+    <li><strong>Video:</strong> react-native-video</li>
+    <li><strong>Camera:</strong> react-native-image-picker, react-native-camera</li>
+    <li><strong>Firebase:</strong> @react-native-firebase/app, @react-native-firebase/messaging, @react-native-firebase/analytics, @react-native-firebase/crashlytics</li>
+    <li><strong>Payment:</strong> react-native-razorpay</li>
+    <li><strong>UI:</strong> react-native-paper / react-native-elements / custom components</li>
+</ul>
+
+<h3>Platform-Specific Considerations</h3>
+<ul>
+    <li><strong>iOS:</strong> Native modules for specific features, App Store guidelines compliance</li>
+    <li><strong>Android:</strong> Native modules, Google Play guidelines compliance</li>
+    <li><strong>Permissions:</strong> react-native-permissions for handling platform-specific permissions</li>
+    <li><strong>Deep Linking:</strong> react-native-deep-linking for both platforms</li>
 </ul>
 
 <hr>
-
-<hr>
-
-<h2 id="infrastructure">Infrastructure & Additional Work</h2>
-
-<div class="note-box">
-    <h3 style="margin-top: 0;">Additional Time Required (Not Included in Screen Estimates)</h3>
-    <table style="margin-top: 15px;">
-        <thead>
-            <tr>
-                <th>Task</th>
-                <th>Working Days</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Project Setup & Infrastructure</td>
-                <td>2.5 working days</td>
-            </tr>
-            <tr>
-                <td>Navigation Setup (React Navigation)</td>
-                <td>1 working day</td>
-            </tr>
-            <tr>
-                <td>State Management Setup</td>
-                <td>1 working day</td>
-            </tr>
-            <tr>
-                <td>API Client & Network Layer</td>
-                <td>1.5 working days</td>
-            </tr>
-            <tr>
-                <td>Database Migration (Room → SQLite/WatermelonDB)</td>
-                <td>1.5 working days</td>
-            </tr>
-            <tr>
-                <td>SharedPreferences → AsyncStorage Migration</td>
-                <td>0.5 working day</td>
-            </tr>
-            <tr>
-                <td>Firebase Integration (FCM, Analytics, Crashlytics)</td>
-                <td>1 working day</td>
-            </tr>
-            <tr>
-                <td>Common Components Library</td>
-                <td>1.5 working days</td>
-            </tr>
-            <tr>
-                <td>Platform-Specific Code (iOS & Android)</td>
-                <td>2 working days</td>
-            </tr>
-            <tr>
-                <td>Testing & QA</td>
-                <td>5 working days</td>
-            </tr>
-            <tr>
-                <td>Performance Optimization</td>
-                <td>1.5 working days</td>
-            </tr>
-            <tr>
-                <td>Build & Deployment Setup</td>
-                <td>1.5 working days</td>
-            </tr>
-            <tr style="background-color: #e3f2fd; font-weight: bold;">
-                <td><strong>Infrastructure Total</strong></td>
-                <td><strong>22 working days</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
 
 <div class="working-hours" style="margin-top: 30px;">
     <h3 style="margin-top: 0; color: #1565c0;">Complete Migration Timeline</h3>
@@ -2095,38 +2009,44 @@ ScannerActivity
                 <th>Category</th>
                 <th>Working Days</th>
                 <th>Weeks</th>
+                <th>Hours</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td><strong>All Screens Development</strong></td>
-                <td><strong>38 working days</strong></td>
-                <td><strong>7.5 weeks</strong></td>
+                <td><strong>42 working days</strong></td>
+                <td><strong>8.5 weeks</strong></td>
+                <td><strong>210 hours</strong></td>
             </tr>
             <tr>
                 <td><strong>Infrastructure & Setup</strong></td>
-                <td><strong>22 working days</strong></td>
-                <td><strong>4.5 weeks</strong></td>
+                <td><strong>20 working days</strong></td>
+                <td><strong>4 weeks</strong></td>
+                <td><strong>100 hours</strong></td>
             </tr>
             <tr style="background-color: #4caf50; color: white; font-weight: bold; font-size: 16px;">
                 <td><strong>GRAND TOTAL</strong></td>
-                <td><strong>60 working days</strong></td>
-                <td><strong>12 weeks</strong></td>
+                <td><strong>62 working days</strong></td>
+                <td><strong>12.5 weeks</strong></td>
+                <td><strong>310 hours</strong></td>
             </tr>
         </tbody>
     </table>
-
+    <p style="margin-top: 15px;"><strong>Calendar Time:</strong> ~3 months</p>
+    <p><strong>Working Schedule:</strong> 5 days/week, 5 hours/day = 25 hours/week</p>
     <p><em>Note: This timeline assumes AI-assisted development with Cursor AI, which significantly accelerates code generation. Timeline optimized for maximum AI assistance efficiency.</em></p>
 </div>
 
 <hr>
 
 <p style="text-align: center; color: #666; margin-top: 40px;">
-    <strong>Document Version</strong>: 2.0<br>
+    <strong>Document Version</strong>: 1.0<br>
     <strong>Last Updated</strong>: Based on Android Manifest and codebase analysis with migration time estimates<br>
-    <strong>Total Screens</strong>: ~110 unique screens<br>
-    <strong>Total Migration Time</strong>: 12 weeks<br>
-    <strong>Development Mode</strong>: AI-Assisted (Cursor AI)
+    <strong>Total Screens</strong>: ~85 unique screens<br>
+    <strong>Total Migration Time</strong>: 62 working days (12.5 weeks) = 310 hours<br>
+    <strong>Development Mode</strong>: AI-Assisted (Cursor AI)<br>
+    <strong>Working Schedule</strong>: 5 days/week, 5 hours/day
 </p>
 
 </body>
