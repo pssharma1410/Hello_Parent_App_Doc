@@ -22,52 +22,64 @@
     .intro { color: #444; margin-bottom: 1.25rem; }
     .bridge-note { background: #e3f2fd; padding: 0.5rem 0.75rem; border-radius: 6px; margin: 0.75rem 0; font-size: 0.95rem; }
     .required { background: #fff3e0; padding: 0.2em 0.5em; border-radius: 4px; font-size: 0.85rem; }
+    .what-do { background: #f5f5f5; padding: 0.4rem 0.6rem; border-radius: 4px; margin: 0.35rem 0; font-size: 0.9rem; }
+    .tag { display: inline-block; padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.75rem; margin-right: 0.25rem; }
+    .tag-ui { background: #e8eaf6; }
+    .tag-api { background: #ffebee; }
+    .tag-nav { background: #e8f5e9; }
+    .tag-data { background: #fff8e1; }
   </style>
 </head>
 <body>
 
 <h1>iOS MemoriesNativeModule – Implementation guide</h1>
 
-<p class="intro">This document describes what to add or implement in your <strong>existing</strong> iOS <code>MemoriesNativeModule</code> (Swift) and its Objective-C bridge (<code>MemoriesNativeModule.m</code>) so that the React Native app uses the same native APIs on both Android and iOS. It includes method names, parameter types, what React passes, and what to return.</p>
+<p class="intro">This document describes what to add or implement in your <strong>existing</strong> iOS <code>MemoriesNativeModule</code> (Swift) and its Objective-C bridge (<code>MemoriesNativeModule.m</code>) so that the React Native app uses the same native APIs on both Android and iOS. It includes method names, parameter types, what React passes, what to return, and <strong>what each function should do</strong> (e.g. API calls, UI, navigation, or returning stored data).</p>
+
+<div class="bridge-note"><strong>Bridge (.m) vs Swift:</strong> For each method, add <code>RCT_EXTERN_METHOD</code> in <code>MemoriesNativeModule.m</code> and implement the corresponding <code>@objc</code> method in your Swift class. Promise-based methods use <code>RCTPromiseResolveBlock</code> and <code>RCTPromiseRejectBlock</code>.</div>
+
+<p><strong>Where callbacks are added:</strong> In the <strong>Objective-C bridge file</strong> (<code>MemoriesNativeModule.m</code>) you declare each method with <code>RCT_EXTERN_METHOD(...)</code>. The <strong>Swift implementation</strong> lives in <code>MemoriesNativeModule.swift</code> (or your Swift module class). React calls these from JS via <code>NativeModules.MemoriesNativeModule</code>; the bridge forwards to your Swift methods.</p>
+
 <h2>1. Methods already in your bridge (verify implementation)</h2>
 
-<p>Your <code>MemoriesNativeModule.m</code> already declares these. Ensure the Swift implementation matches the following contract.</p>
+<p>Your <code>MemoriesNativeModule.m</code> already declares these. Ensure the Swift implementation matches the following contract and does what is described.</p>
 
 <h3>1.1 showToast(message:isError:)</h3>
 <table>
   <tr><th>Bridge (.m)</th><td><code>RCT_EXTERN_METHOD(showToast:(NSString *)message isError:(BOOL)isError)</code></td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-ui">UI only</span> Show a short-lived toast/banner with <code>message</code>. No API call. No navigation. Use <code>isError</code> to style (e.g. red for error, green for success).</td></tr>
   <tr><th>React call</th><td><code>MemoriesNativeModule.showToast(message, isError)</code></td></tr>
   <tr><th>Parameters</th><td>
-    <div class="param"><code>message</code> (NSString) – Text to show. React passes a string (e.g. "Shared successfully", "Please select a plan").</div>
-    <div class="param"><code>isError</code> (BOOL) – If true, show as error style (e.g. red); if false, success/info style.</div>
+    <div class="param"><code>message</code> (NSString) – Text to show (e.g. "Shared successfully", "Please select a plan").</div>
+    <div class="param"><code>isError</code> (BOOL) – If true, error style; if false, success/info style.</div>
   </td></tr>
   <tr><th>Returns</th><td>Nothing (void). Fire-and-forget.</td></tr>
-  <tr><th>iOS implementation</th><td>Show a short-lived banner or toast (e.g. custom view, or a third-party toast). Optionally use different appearance for <code>isError == true</code> vs <code>false</code>.</td></tr>
+  <tr><th>iOS implementation</th><td>Display a transient view or use a toast library. No network call.</td></tr>
 </table>
 
 <h3>1.2 shareContent(content:title:)</h3>
 <table>
   <tr><th>Bridge (.m)</th><td><code>RCT_EXTERN_METHOD(shareContent:(NSString *)content title:(NSString *)title)</code></td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-ui">UI only</span> Present the native share sheet with <code>content</code> as the shared text and <code>title</code> as the share title. No API call. No navigation (other than showing the sheet).</td></tr>
   <tr><th>React call</th><td><code>MemoriesNativeModule.shareContent(shareMessage, 'Share Story')</code></td></tr>
   <tr><th>Parameters</th><td>
-    <div class="param"><code>content</code> (NSString) – The share text (message body). May include referral text and deeplink URL.</div>
-    <div class="param"><code>title</code> (NSString) – Share sheet title. React passes <code>"Share Story"</code>.</div>
+    <div class="param"><code>content</code> (NSString) – Share text (may include referral + deeplink URL).</div>
+    <div class="param"><code>title</code> (NSString) – Share sheet title; React passes <code>"Share Story"</code>.</div>
   </td></tr>
-  <tr><th>Returns</th><td>Nothing. Present <code>UIActivityViewController</code> with <code>content</code> (and optionally <code>title</code>).</td></tr>
+  <tr><th>Returns</th><td>Nothing. Present <code>UIActivityViewController</code> with <code>content</code> and <code>title</code>.</td></tr>
 </table>
 
 <h3>1.3 shareContentAndActivateTrialOnReturn(content:title:programId:studentId:)</h3>
 <table>
-  <tr><th>Bridge (.m)</th><td>If React is to <code>await</code> this, the bridge must expose a Promise. Use: <code>RCT_EXTERN_METHOD(shareContentAndActivateTrialOnReturn:(NSString *)content title:(NSString *)title programId:(NSString *)programId studentId:(NSString *)studentId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)</code>. If your current .m has no resolve/reject, add them and call <code>resolve(nil)</code> when the share flow completes (and optionally after activate_trial), and <code>reject(...)</code> on failure.</td></tr>
+  <tr><th>Bridge (.m)</th><td>If React <code>await</code>s this, add resolve/reject: <code>RCT_EXTERN_METHOD(shareContentAndActivateTrialOnReturn:(NSString *)content title:(NSString *)title programId:(NSString *)programId studentId:(NSString *)studentId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)</code>.</td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-ui">UI</span> <span class="tag tag-api">API</span> (1) Present the native share sheet with <code>content</code> and <code>title</code>. (2) When the user dismisses the share sheet, call your <strong>backend API to activate trial</strong> (e.g. <code>create_subscription</code> or equivalent) using <code>programId</code> and <code>studentId</code>. (3) Then resolve the Promise. Reject on share failure or API failure. No navigation (other than the sheet).</td></tr>
   <tr><th>React call</th><td><code>await MemoriesNativeModule.shareContentAndActivateTrialOnReturn(shareMessage, 'Share Story', programId, selectedStudentId)</code></td></tr>
   <tr><th>Parameters</th><td>
-    <div class="param"><code>content</code> (NSString) – Same as shareContent.</div>
-    <div class="param"><code>title</code> (NSString) – Same as shareContent.</div>
-    <div class="param"><code>programId</code> (NSString) – Program ID for trial activation. May be empty string.</div>
-    <div class="param"><code>studentId</code> (NSString) – Student ID for trial activation. May be empty string.</div>
+    <div class="param"><code>content</code>, <code>title</code> – Same as shareContent.</div>
+    <div class="param"><code>programId</code> (NSString) – Program ID for the trial-activation API. May be empty.</div>
+    <div class="param"><code>studentId</code> (NSString) – Student ID for the trial-activation API. May be empty.</div>
   </td></tr>
-  <tr><th>Returns</th><td>React awaits a Promise. Call <code>resolve(nil)</code> or <code>resolve(@(YES))</code> when share sheet is dismissed and (optionally) after triggering activate_trial on your backend. Call <code>reject(code, message, error)</code> on failure.</td></tr>
-  <tr><th>iOS implementation</th><td>Present share sheet; in the completion handler (e.g. when user dismisses), call your backend to activate trial with <code>programId</code> and <code>studentId</code>, then call <code>resolve(nil)</code>. Reject if share fails or API fails.</td></tr>
+  <tr><th>Returns</th><td>Promise. Resolve when share is dismissed and (optionally) after the activate_trial API succeeds. Reject on failure.</td></tr>
 </table>
 
 <h2>2. Methods to add to the bridge and Swift</h2>
@@ -77,78 +89,110 @@
 <h3>2.1 getSchoolId</h3>
 <table>
   <tr><th>Add to .m</th><td><code>RCT_EXTERN_METHOD(getSchoolId:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)</code></td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-data">Data only</span> Return the current school ID from app context (e.g. stored when opening the RN screen). <strong>No API call.</strong> No UI. Resolve with the string; use <code>@""</code> if unknown.</td></tr>
   <tr><th>React call</th><td><code>await MemoriesNativeModule.getSchoolId()</code></td></tr>
   <tr><th>Parameters</th><td>None.</td></tr>
-  <tr><th>Resolve with</th><td>NSString – current school ID (e.g. from your app context / user session). Pass empty string <code>@""</code> if not available.</td></tr>
-  <tr><th>Reject</th><td>On fatal error (e.g. no session). Prefer resolving with <code>@""</code> if school is simply unknown.</td></tr>
+  <tr><th>Resolve with</th><td>NSString – current school ID. Empty string if not available.</td></tr>
 </table>
 
 <h3>2.2 goBackAndStartFromFirstSlide</h3>
 <table>
   <tr><th>Add to .m</th><td><code>RCT_EXTERN_METHOD(goBackAndStartFromFirstSlide)</code></td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-nav">Navigation</span> (1) Dismiss the React Native screen (e.g. the presented ReactNativeViewController). (2) Tell the story view controller to jump to the first slide (e.g. set current page/slide index to 0). No API call. No UI other than closing RN and updating story position.</td></tr>
   <tr><th>React call</th><td><code>MemoriesNativeModule.goBackAndStartFromFirstSlide()</code></td></tr>
   <tr><th>Parameters</th><td>None.</td></tr>
-  <tr><th>Returns</th><td>Void. Dismiss the React Native screen (e.g. the presented ReactNativeViewController), then tell the story view controller to reset to the first slide (e.g. set current page/slide index to 0).</td></tr>
+  <tr><th>Returns</th><td>Void.</td></tr>
 </table>
 
 <h3>2.3 openAlbumDetailScreen(id)</h3>
 <table>
   <tr><th>Add to .m</th><td><code>RCT_EXTERN_METHOD(openAlbumDetailScreen:(NSString *)id)</code></td></tr>
-  <tr><th>React call</th><td><code>MemoriesNativeModule.openAlbumDetailScreen(id)</code> – <code>id</code> is album.id or album._id (string or number from JS).</td></tr>
-  <tr><th>Parameters</th><td><code>id</code> (NSString) – Album identifier. React may pass a number; the bridge will receive it as a string (e.g. <code>"123"</code>).</td></tr>
-  <tr><th>Returns</th><td>Void. Open the album detail screen (same React Native screen with album context, or a native screen) for this album.</td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-nav">Navigation</span> Open the album detail experience for the given album <code>id</code> (e.g. present the same React Native album-detail screen with album context, or push a native album detail VC). No API call in the module (RN or backend may fetch album data).</td></tr>
+  <tr><th>React call</th><td><code>MemoriesNativeModule.openAlbumDetailScreen(id)</code></td></tr>
+  <tr><th>Parameters</th><td><code>id</code> (NSString) – Album identifier.</td></tr>
+  <tr><th>Returns</th><td>Void.</td></tr>
 </table>
 
 <h3>2.4 downloadAlbumImages(urls)</h3>
 <table>
-  <tr><th>Add to .m</th><td><code>RCT_EXTERN_METHOD(downloadAlbumImages:(NSArray *)urls)</code> – or if you prefer stringified JSON: <code>RCT_EXTERN_METHOD(downloadAlbumImages:(NSString *)urlsJson)</code> and parse in Swift.</td></tr>
-  <tr><th>React call</th><td><code>MemoriesNativeModule.downloadAlbumImages(urls)</code> – <code>urls</code> is a JS array of URL strings, e.g. <code>["https://...", "https://..."]</code>.</td></tr>
-  <tr><th>Parameters</th><td><code>urls</code> – If using NSArray: array of NSString (image URLs). If using NSString: JSON array string, e.g. <code>["https://...","https://..."]</code>. Parse in Swift with <code>JSONSerialization</code>.</td></tr>
-  <tr><th>Returns</th><td>Void. Download each URL (e.g. URLSession) and save to Photos or Files. Optionally show a native progress or “Saved” toast.</td></tr>
+  <tr><th>Add to .m</th><td><code>RCT_EXTERN_METHOD(downloadAlbumImages:(NSArray *)urls)</code> or <code>(NSString *)urlsJson</code> and parse in Swift.</td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-ui">UI</span> (optional) <span class="tag tag-api">Network</span> Download each image URL (e.g. URLSession), then save to the Photo Library or Files. Optionally show a native progress indicator or “Saved” toast. No backend API call—just HTTP GET and local save.</td></tr>
+  <tr><th>React call</th><td><code>MemoriesNativeModule.downloadAlbumImages(urls)</code> – array of URL strings.</td></tr>
+  <tr><th>Parameters</th><td><code>urls</code> – Array of image URL strings (or JSON array string).</td></tr>
+  <tr><th>Returns</th><td>Void.</td></tr>
 </table>
 
 <h3>2.5 shareAlbumImages(items, title)</h3>
 <table>
-  <tr><th>Add to .m</th><td>If bridge supports array/dict: <code>RCT_EXTERN_METHOD(shareAlbumImages:(NSArray *)items title:(NSString *)title)</code>. Else pass stringified JSON: <code>RCT_EXTERN_METHOD(shareAlbumImages:(NSString *)itemsJson title:(NSString *)title)</code>.</td></tr>
-  <tr><th>React call</th><td><code>MemoriesNativeModule.shareAlbumImages(items, album?.title ?? 'Album')</code>. <code>items</code> is array of <code>{ url: string, isVideo: boolean }</code>.</td></tr>
-  <tr><th>Parameters</th><td>
-    <div class="param"><code>items</code> – Array of objects with <code>url</code> (string) and <code>isVideo</code> (boolean). If using NSString, React can pass <code>JSON.stringify(items)</code> and you parse in Swift.</div>
-    <div class="param"><code>title</code> (NSString) – Album title for the share sheet.</div>
-  </td></tr>
-  <tr><th>Returns</th><td>Void. Build <code>UIActivityViewController</code> with the image URLs (and optionally video URLs). Use <code>isVideo</code> to decide whether to share as image or video if needed.</td></tr>
+  <tr><th>Add to .m</th><td><code>RCT_EXTERN_METHOD(shareAlbumImages:(NSArray *)items title:(NSString *)title)</code> or stringified JSON for <code>items</code>.</td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-ui">UI only</span> Present <code>UIActivityViewController</code> with the image (and optionally video) URLs from <code>items</code>. Use <code>title</code> for the share context. No API call. No navigation.</td></tr>
+  <tr><th>React call</th><td><code>MemoriesNativeModule.shareAlbumImages(items, album?.title ?? 'Album')</code>. <code>items</code>: array of <code>{ url, isVideo }</code>.</td></tr>
+  <tr><th>Parameters</th><td><code>items</code>, <code>title</code> (NSString).</td></tr>
+  <tr><th>Returns</th><td>Void.</td></tr>
 </table>
 
 <h3>2.6 openVideoPlayer(url)</h3>
 <table>
   <tr><th>Add to .m</th><td><code>RCT_EXTERN_METHOD(openVideoPlayer:(NSString *)url)</code></td></tr>
-  <tr><th>React call</th><td><code>MemoriesNativeModule.openVideoPlayer(url)</code> – single video URL string.</td></tr>
-  <tr><th>Parameters</th><td><code>url</code> (NSString) – Video URL (or thumbnail URL if that’s what React passes).</td></tr>
-  <tr><th>Returns</th><td>Void. Present full-screen AVPlayer (or AVPlayerViewController) with this URL.</td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-ui">UI only</span> Present a full-screen video player (e.g. AVPlayerViewController) with the given <code>url</code>. No API call. No navigation other than presenting the player.</td></tr>
+  <tr><th>React call</th><td><code>MemoriesNativeModule.openVideoPlayer(url)</code></td></tr>
+  <tr><th>Parameters</th><td><code>url</code> (NSString) – Video URL.</td></tr>
+  <tr><th>Returns</th><td>Void.</td></tr>
 </table>
 
 <h3>2.7 openAlbumImageZoom(albumJson, index)</h3>
 <table>
   <tr><th>Add to .m</th><td><code>RCT_EXTERN_METHOD(openAlbumImageZoom:(NSString *)albumJson index:(NSInteger)index)</code></td></tr>
-  <tr><th>React call</th><td><code>MemoriesNativeModule.openAlbumImageZoom(JSON.stringify(album), index)</code>. <code>album</code> is the full album object (images array, titles, etc.).</td></tr>
-  <tr><th>Parameters</th><td>
-    <div class="param"><code>albumJson</code> (NSString) – JSON string of the album object. Parse in Swift with <code>JSONSerialization.jsonObject(with:data)</code>. Structure typically includes an array of image items (urls, captions, etc.).</div>
-    <div class="param"><code>index</code> (NSInteger) – Zero-based index of the image to show first. Use for initial page in a page view controller or gallery.</div>
-  </td></tr>
-  <tr><th>Returns</th><td>Void. Present a full-screen image viewer (native or RN) that can swipe through album images starting at <code>index</code>.</td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-ui">UI only</span> Parse <code>albumJson</code>, then present a full-screen image viewer (e.g. page view controller or gallery) that can swipe through the album images, starting at <code>index</code>. No API call. No navigation other than presenting the viewer.</td></tr>
+  <tr><th>React call</th><td><code>MemoriesNativeModule.openAlbumImageZoom(JSON.stringify(album), index)</code></td></tr>
+  <tr><th>Parameters</th><td><code>albumJson</code> (NSString), <code>index</code> (NSInteger).</td></tr>
+  <tr><th>Returns</th><td>Void.</td></tr>
 </table>
 
 <h3>2.8 shareAlbum(title, publicUrl)</h3>
 <table>
   <tr><th>Add to .m</th><td><code>RCT_EXTERN_METHOD(shareAlbum:(NSString *)title publicUrl:(NSString *)publicUrl)</code></td></tr>
+  <tr><th>What this function should do</th><td><span class="tag tag-ui">UI only</span> Present <code>UIActivityViewController</code> with <code>publicUrl</code> (and optionally <code>title</code>) so the user can share the album link. No API call. No navigation.</td></tr>
   <tr><th>React call</th><td><code>MemoriesNativeModule.shareAlbum(title, publicUrl)</code></td></tr>
-  <tr><th>Parameters</th><td>
-    <div class="param"><code>title</code> (NSString) – Album title (e.g. "Summer 2024").</div>
-    <div class="param"><code>publicUrl</code> (NSString) – Public link to the album (e.g. https://...).</div>
-  </td></tr>
-  <tr><th>Returns</th><td>Void. Present <code>UIActivityViewController</code> with <code>publicUrl</code> and optionally <code>title</code> as the message or subject.</td></tr>
+  <tr><th>Parameters</th><td><code>title</code>, <code>publicUrl</code> (NSString).</td></tr>
+  <tr><th>Returns</th><td>Void.</td></tr>
 </table>
 
-<h2>3. Summary – what to add in MemoriesNativeModule.m</h2>
+<h2>3. All other methods already in the bridge – what each should do</h2>
+
+<p>These are already declared in your <code>MemoriesNativeModule.m</code>. Use this as a checklist for implementation behavior (API vs UI vs data vs navigation).</p>
+
+<table>
+  <thead>
+    <tr><th>Method</th><th>What it should do</th><th>API / UI / Nav / Data</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>getScreenData</code></td><td>Return the screen config JSON string that was set by native (e.g. via <code>setScreenData</code>) before presenting the RN screen. React parses it for screen_type, screen_title, icons, CTAs. <strong>No API call</strong>—return stored value.</td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getBaseUrl</code></td><td>Return the API base URL string set by native (e.g. <code>setBaseUrl</code>) when opening the RN flow. <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getAuthToken</code></td><td>Return the auth token string set by native when opening the RN flow. <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getStoryId</code></td><td>Return the current story ID string set by native. <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getStudentId</code></td><td>Return the current student ID string set by native. <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getReadingNight</code></td><td>Return the reading night flag string (e.g. "0" or "1") set by native. <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getAssetUri(assetName)</code></td><td>Return a file path or URI for the bundled asset (e.g. <code>back_arrow.png</code>, <code>share_icon.png</code>). Resolve with the path/URL string so RN can use it in Image source. <strong>No API call</strong>—read from app bundle.</td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>goBack</code></td><td>Dismiss the React Native screen (e.g. dismiss the presented ReactNativeViewController) so the user returns to the previous native screen. <strong>No API call.</strong></td><td><span class="tag tag-nav">Navigation</span></td></tr>
+    <tr><td><code>handleCTAClick(type, name)</code></td><td>Handle a CTA tap from RN (e.g. type <code>"SHARE"</code>, <code>"CAPTURED_MEMORIES"</code>). Typically: navigate to another screen, open a deep link, or trigger a native flow. May involve <strong>no API</strong> or your app may call an API depending on CTA.</td><td><span class="tag tag-nav">Navigation</span> (optional API)</td></tr>
+    <tr><td><code>openCapturedMemoriesScreen</code></td><td>Open the “Captured memories” RN screen (or equivalent). Usually done by presenting the same RN root with screen data set to captured_memories. <strong>No API call</strong> in the module—data is pre-set via setScreenData etc.</td><td><span class="tag tag-nav">Navigation</span></td></tr>
+    <tr><td><code>openRazorpayCheckout(planPayloadJson)</code></td><td>Open the payment/checkout UI (e.g. Razorpay SDK or your payment flow). The payload contains plan details. The payment SDK or your flow will perform <strong>API calls</strong> for payment; the module just opens the UI.</td><td><span class="tag tag-ui">UI</span> (payment SDK may call API)</td></tr>
+    <tr><td><code>createSubscriptionAndOpenPayment(planPayloadJson)</code></td><td>Call your <strong>backend API to create the subscription</strong>, then open the payment UI. Resolve/reject the Promise based on API and payment result.</td><td><span class="tag tag-api">API</span> + <span class="tag tag-ui">UI</span></td></tr>
+    <tr><td><code>openCamera</code></td><td>Present the native camera (UIImagePickerController or AVCaptureSession). Resolve with the selected/captured image file path or URI; reject if user cancels or permission denied. <strong>No API call.</strong></td><td><span class="tag tag-ui">UI</span></td></tr>
+    <tr><td><code>openGallery</code></td><td>Present the native photo picker. Resolve with the selected image file path or URI; reject if user cancels or permission denied. <strong>No API call.</strong></td><td><span class="tag tag-ui">UI</span></td></tr>
+    <tr><td><code>getFilePathFromUri(uri)</code></td><td>Convert a content URI (or asset URI) to a local file path the app can read (e.g. for upload). On iOS, photo picker often returns a path directly; you may return it as-is or copy to temp file and return that path. <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span> (file system)</td></tr>
+    <tr><td><code>captureBedtimeMoment(imagePath, storyId, studentId)</code></td><td><strong>Call your backend API to upload the bedtime moment image</strong> (e.g. multipart upload with storyId and studentId). Resolve with an object React expects: e.g. <code>{ status: "SUCCESS", successMessage: "..." }</code> or <code>{ status: "FAILURE", message: "..." }</code>. Reject on network/API error. React uses <code>responseData.status</code>, <code>responseData.successMessage</code>, <code>responseData.message</code> / <code>responseData.error</code>.</td><td><span class="tag tag-api">API</span> (upload)</td></tr>
+    <tr><td><code>getDeviceId</code></td><td>Return the device identifier string (e.g. IDFV or your app-specific id). <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getDeviceManufacturer</code></td><td>Return <code>"Apple"</code> or similar. <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getDeviceModel</code></td><td>Return the device model name (e.g. "iPhone 14"). <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getOsVersion</code></td><td>Return the OS version string (e.g. "17.0"). <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getAppVersion</code></td><td>Return the app version string from Info.plist. <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+    <tr><td><code>getAppCode</code></td><td>Return the app build number (e.g. CFBundleVersion). <strong>No API call.</strong></td><td><span class="tag tag-data">Data</span></td></tr>
+  </tbody>
+</table>
+
+<h2>4. Summary – what to add in MemoriesNativeModule.m</h2>
 
 <pre>// Add these to your existing RCT_EXTERN_MODULE block:
 
@@ -167,7 +211,7 @@ RCT_EXTERN_METHOD(shareAlbum:(NSString *)title publicUrl:(NSString *)publicUrl)<
   <li><code>shareAlbumImages:(NSString *)itemsJson title:(NSString *)title</code> – parse <code>itemsJson</code> as JSON array of <code>{ url, isVideo }</code>.</li>
 </ul>
 
-<h2>4. Parameter types from React (reference)</h2>
+<h2>5. Parameter types from React (reference)</h2>
 
 <table>
   <thead>
@@ -184,7 +228,7 @@ RCT_EXTERN_METHOD(shareAlbum:(NSString *)title publicUrl:(NSString *)publicUrl)<
   </tbody>
 </table>
 
-<h2>5. React code changes already done</h2>
+<h2>6. React code changes already done</h2>
 
 <p>The following React files were updated so that native module methods are used on <strong>both</strong> Android and iOS when the module exists (no <code>Platform.OS === 'android'</code> guard for these calls):</p>
 <ul>
@@ -193,6 +237,7 @@ RCT_EXTERN_METHOD(shareAlbum:(NSString *)title publicUrl:(NSString *)publicUrl)<
   <li><code>CapturedBedtimeMemoriesScreen.js</code> – showToast</li>
   <li><code>rn-app/MemoriesScreen.js</code>, <code>rn-app/PostSevenStoriesScreen.js</code>, <code>rn-app/CapturedBedtimeMemoriesScreen.js</code> – same logic</li>
 </ul>
+<p>So once the iOS module implements the methods above (including the new ones in §2), the same React code will call them on iOS without further JS changes.</p>
 
 </body>
 </html>
