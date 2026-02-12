@@ -36,7 +36,6 @@
 
 <p class="intro">This document describes what to add or implement in your <strong>existing</strong> iOS <code>MemoriesNativeModule</code> (Swift) and its Objective-C bridge (<code>MemoriesNativeModule.m</code>) so that the React Native app uses the same native APIs on both Android and iOS. It includes method names, parameter types, what React passes, what to return, and <strong>what each function should do</strong> (e.g. API calls, UI, navigation, or returning stored data).</p>
 
-<div class="bridge-note"><strong>Bridge (.m) vs Swift:</strong> For each method, add <code>RCT_EXTERN_METHOD</code> in <code>MemoriesNativeModule.m</code> and implement the corresponding <code>@objc</code> method in your Swift class. Promise-based methods use <code>RCTPromiseResolveBlock</code> and <code>RCTPromiseRejectBlock</code>.</div>
 
 <p><strong>Where callbacks are added:</strong> In the <strong>Objective-C bridge file</strong> (<code>MemoriesNativeModule.m</code>) you declare each method with <code>RCT_EXTERN_METHOD(...)</code>. The <strong>Swift implementation</strong> lives in <code>MemoriesNativeModule.swift</code> (or your Swift module class). React calls these from JS via <code>NativeModules.MemoriesNativeModule</code>; the bridge forwards to your Swift methods.</p>
 
@@ -237,7 +236,6 @@ RCT_EXTERN_METHOD(shareAlbum:(NSString *)title publicUrl:(NSString *)publicUrl)<
   <li><code>CapturedBedtimeMemoriesScreen.js</code> – showToast</li>
   <li><code>rn-app/MemoriesScreen.js</code>, <code>rn-app/PostSevenStoriesScreen.js</code>, <code>rn-app/CapturedBedtimeMemoriesScreen.js</code> – same logic</li>
 </ul>
-<p>So once the iOS module implements the methods above (including the new ones in §2), the same React code will call them on iOS without further JS changes.</p>
 
 </body>
 </html>
